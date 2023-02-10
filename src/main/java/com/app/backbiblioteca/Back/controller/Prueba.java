@@ -3,6 +3,7 @@ package com.app.backbiblioteca.Back.controller;
 
 
 import com.app.backbiblioteca.Back.dto.BookDTO;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 
-
+@CrossOrigin("http://localhost:5173/")
 @RestController
 public class Prueba {
 
