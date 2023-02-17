@@ -2,12 +2,15 @@ package com.app.backbiblioteca.Back.controller;
 
 
 
+
+import com.app.backbiblioteca.Back.config.DatabaseConfig;
 import com.app.backbiblioteca.Back.dto.BookDTO;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
 
 
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 public class Prueba {
 
     private final Logger logger= LogManager.getLogger(this.getClass());
+
 
     @GetMapping("/hello")
     public ArrayList<Response> sayHello(){
@@ -32,6 +36,12 @@ public class Prueba {
         lista.add(response2);
 
         return lista;
+    }
+
+    @GetMapping("/prueba")
+    public String probando(){
+        DatabaseConfig databaseConfig= new DatabaseConfig();
+        return databaseConfig.prueba();
     }
 
     @GetMapping("/allBooks")
