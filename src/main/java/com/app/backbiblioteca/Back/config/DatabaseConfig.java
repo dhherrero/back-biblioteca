@@ -3,6 +3,7 @@ package com.app.backbiblioteca.Back.config;
 import com.zaxxer.hikari.HikariDataSource;
 
 
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -13,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
+@NoArgsConstructor
 @Service
 public class DatabaseConfig {
 
@@ -35,12 +36,18 @@ public class DatabaseConfig {
         return dataSource().getConnection();
     }
 
+    public PreparedStatement statement (String sqlSentence) throws SQLException {
+        Connection dbcon= getConnection();
+        PreparedStatement pst= dbcon.prepareStatement(sqlSentence);
+        return pst;
+    }
+
 
     public String prueba() {
         logger.info("Dentroo");
         String result=null;
         String sql = "SELECT  * FROM libros";
-        try(Connection dbcon= getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)){
+        try(PreparedStatement pst= statement(sql)){
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
                 result= rs.getString("titulo");

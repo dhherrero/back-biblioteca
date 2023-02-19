@@ -3,8 +3,9 @@ package com.app.backbiblioteca.Back.controller;
 
 
 
+import com.app.backbiblioteca.Back.books.service.BookService;
 import com.app.backbiblioteca.Back.config.DatabaseConfig;
-import com.app.backbiblioteca.Back.dto.BookDTO;
+import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 
-
+import java.sql.Date;
 import java.util.ArrayList;
 
 @CrossOrigin("http://localhost:5173/")
@@ -44,16 +45,22 @@ public class Prueba {
         return databaseConfig.prueba();
     }
 
+    @GetMapping("/prueba2")
+    public String probando2(){
+        BookService bookService = new BookService();
+        return bookService.prueba();
+    }
+
     @GetMapping("/allBooks")
     public ArrayList<BookDTO> getLibros(){
         logger.info("/allBooks");
-        BookDTO libro1 = new BookDTO(1,101,2,256,4,"La vida es bella",
+        BookDTO libro1 = new BookDTO(1,101,2,256,4,Date.valueOf("2002-02-02"),"La vida es bella",
                 "https://images.cdn2.buscalibre.com/fit-in/360x360/28/e1/28e1f4a3ba4cfc7422dda5c3f96cd041.jpg",
-                "ISBN","Javier","Planeta de libros","02/02/2002",
+                "ISBN","Javier","Planeta de libros",
                 "Inglés","Español","Bueno","Drama");
-        BookDTO libro2 = new BookDTO(2,102,57,26786,4,"La vida es mala",
+        BookDTO libro2 = new BookDTO(2,102,57,26786,4,Date.valueOf("2002-05-12"),"La vida es mala",
                 "https://edit.org/images/cat/portadas-libros-big-2019101610.jpg",
-                "ISBN","Roberto","Venus","04/08/2012",
+                "ISBN","Roberto","Venus",
                 "Inglés","Español","Bueno","Terror");
         ArrayList <BookDTO> lista = new ArrayList<>();
         lista.add(libro1);
