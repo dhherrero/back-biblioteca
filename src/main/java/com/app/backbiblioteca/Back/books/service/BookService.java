@@ -6,6 +6,7 @@ import com.sun.deploy.net.HttpResponse;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -34,7 +35,7 @@ public class BookService {
         return result;
     }
 
-    public void insertBook(BookDTO book){
+    public HttpStatus insertBook(BookDTO book){
         String sql= "INSERT INTO libros (numero, titulo, imagen, id, isbn, edad, autores, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         int numero= book.getNumero(), id= book.getId(), edad= book.getEdad(),
@@ -64,16 +65,14 @@ public class BookService {
             pst.setInt(14,edicion);
             pst.setString(15,formato);
             pst.setString(16,genero);
+            pst.execute();
 
-            boolean rs= pst.execute();
-            logger.info("RES::: "+ rs);
 
         } catch (SQLException throwables) {
             logger.error(throwables);
+            return HttpStatus.NOT_ACCEPTABLE;
         }
-
-
-
+            return HttpStatus.CREATED;
     }
 
 
