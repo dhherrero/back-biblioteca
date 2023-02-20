@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @Service
 @NoArgsConstructor
@@ -35,6 +36,20 @@ public class BookService {
         return result;
     }
 
+    public BookDTO saveInBook(ResultSet rs) throws SQLException {
+        BookDTO book= BookDTO.builder().numero(rs.getInt("numero")).
+                id(rs.getInt("id")).edad(rs.getInt("edad")).
+                paginas(rs.getInt("numeroPaginas")).
+                edicion(rs.getInt("edicion")).fechaEdicion(rs.getDate("fechaEdicion")).
+                titulo(rs.getString("titulo")).
+                imagen(rs.getString("imagen")).ISBN(rs.getString("isbn")).
+                autor(rs.getString("autores")).editorial(rs.getString("editorial")).
+                lenguaPublicacion(rs.getString("lenguaPublicacion")).
+                lenguaTraduccion(rs.getString("lenguaTraduccion")).formato(rs.getString("formato")).
+                genero(rs.getString("genero")).build();
+        return book;
+    }
+
     public HttpStatus insertBook(BookDTO book){
         String sql= "INSERT INTO libros (numero, titulo, imagen, id, isbn, edad, autores, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -49,31 +64,59 @@ public class BookService {
                 descripcion= book.getDescripcion(), formato= book.getFormato(), genero= book.getGenero();
 
         try(PreparedStatement pst= db.statement(sql)) {
-            pst.setInt(1,numero);
-            pst.setString(2,titulo);
-            pst.setString(3,imagen);
-            pst.setInt(4,id);
-            pst.setString(5,isbn);
-            pst.setInt(6,edad);
-            pst.setString(7,autores);
-            pst.setString(8,editorial);
-            pst.setDate(9,fechaEdicion);
-            pst.setString(10,lenguaPublicacion);
-            pst.setString(11, lenguaTraduccion);
-            pst.setInt(12,numeroPaginas);
-            pst.setString(13,descripcion);
-            pst.setInt(14,edicion);
-            pst.setString(15,formato);
-            pst.setString(16,genero);
+            pst.setInt(1,numero); pst.setString(2,titulo);
+            pst.setString(3,imagen); pst.setInt(4,id);
+            pst.setString(5,isbn); pst.setInt(6,edad);
+            pst.setString(7,autores); pst.setString(8,editorial);
+            pst.setDate(9,fechaEdicion); pst.setString(10,lenguaPublicacion);
+            pst.setString(11, lenguaTraduccion); pst.setInt(12,numeroPaginas);
+            pst.setString(13,descripcion); pst.setInt(14,edicion);
+            pst.setString(15,formato); pst.setString(16,genero);
             pst.execute();
-
 
         } catch (SQLException throwables) {
             logger.error(throwables);
             return HttpStatus.NOT_ACCEPTABLE;
         }
-            return HttpStatus.CREATED;
+            return HttpStatus.CREATED; }
+
+    public ArrayList <BookDTO> allBooks(){
+        String sql ="SELECT * FROM libros";
+        ArrayList <BookDTO> listaLibros = new ArrayList<>();
+        try(PreparedStatement pst= db.statement(sql)) {
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()){
+                BookDTO book= saveInBook(rs);
+                listaLibros.add(book);
+            }
+        } catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return listaLibros;
     }
 
-
+    public BookDTO readBook(){
+        String sql ="SELECT * FROM libros where numero =?";
+        int numero=6;
+        BookDTO libro2=null;
+        try(PreparedStatement pst= db.statement(sql)) {
+            pst.setInt(1,numero);
+            ResultSet rs = pst.executeQuery();
+            if(rs.next()){
+                libro2= BookDTO.builder().numero(rs.getInt("numero")).
+                        id(rs.getInt("id")).edad(rs.getInt("edad")).
+                        paginas(rs.getInt("numeroPaginas")).
+                        edicion(rs.getInt("edicion")).fechaEdicion(rs.getDate("fechaEdicion")).
+                        titulo(rs.getString("titulo")).
+                        imagen(rs.getString("imagen")).ISBN(rs.getString("isbn")).
+                        autor(rs.getString("autores")).editorial(rs.getString("editorial")).
+                        lenguaPublicacion(rs.getString("lenguaPublicacion")).
+                        lenguaTraduccion(rs.getString("lenguaTraduccion")).formato(rs.getString("formato")).
+                        genero(rs.getString("genero")).build();
+            }
+        } catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return libro2;
+    }
 }

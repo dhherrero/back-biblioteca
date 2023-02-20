@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,4 +51,19 @@ public class BookController {
         HttpStatus response= bookService.insertBook(libro2);
         return getResponse(response);
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<?> readBook(){
+        BookDTO response = bookService.readBook();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+    }
+
+    @GetMapping("/library")
+    public ResponseEntity<?> allBooks(){
+        ArrayList<BookDTO> response = bookService.allBooks();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+    }
+
 }
