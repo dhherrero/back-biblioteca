@@ -14,7 +14,7 @@ import java.sql.Date;
 public class BookDTO {
     private int numero, id, edad,paginas, edicion;
     private Date fechaEdicion;
-    private String titulo, imagen, ISBN, autor, editorial,
+    private String titulo, imagen, isbn, autor, editorial,
             lenguaPublicacion,lenguaTraduccion,formato,genero,descripcion ;
 
 

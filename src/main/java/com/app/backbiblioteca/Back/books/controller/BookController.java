@@ -22,15 +22,14 @@ public class BookController {
 
     private static final String OK= "ACTION WAS SUCCESFUL";
     private static final String CREATED= "BOOK CREATED";
-    private static final String NOT_CREATED= "NOT CREATED";
-
-
+    private static final String NOT_SUCCESFUL= "ACTION WAS NOT SUCCESFUL";
 
 
     public ResponseEntity<?> getResponse(HttpStatus httpStatus){
         Map<HttpStatus,ResponseEntity<?>> mapResponse= new HashMap<>();
+        mapResponse.put(HttpStatus.OK,new ResponseEntity<>(OK,HttpStatus.OK));
         mapResponse.put(HttpStatus.CREATED,new ResponseEntity<>(CREATED,HttpStatus.CREATED));
-        mapResponse.put(HttpStatus.NOT_ACCEPTABLE,new ResponseEntity<>(NOT_CREATED,HttpStatus.NOT_ACCEPTABLE));
+        mapResponse.put(HttpStatus.NOT_ACCEPTABLE,new ResponseEntity<>(NOT_SUCCESFUL,HttpStatus.NOT_ACCEPTABLE));
         return mapResponse.get(httpStatus);
     }
 
@@ -38,10 +37,9 @@ public class BookController {
     public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
         BookDTO libro= BookDTO.builder().numero(payload.getNumero()).id(payload.getId()).edad(payload.getEdad()).
                 paginas(payload.getPaginas()).edicion(payload.getEdicion()).fechaEdicion(payload.getFechaEdicion()).
-                titulo(payload.getTitulo()).imagen(payload.getImagen()).ISBN(payload.getISBN()).autor(payload.getAutor()).
+                titulo(payload.getTitulo()).imagen(payload.getImagen()).isbn(payload.getIsbn()).autor(payload.getAutor()).
                 editorial(payload.getEditorial()).lenguaPublicacion(payload.getLenguaPublicacion()).descripcion(payload.getDescripcion()).
                 lenguaTraduccion(payload.getLenguaTraduccion()).formato(payload.getFormato()).genero(payload.getGenero()).build();
-
 
         HttpStatus response= bookService.insertBook(libro);
         return getResponse(response);
@@ -53,7 +51,13 @@ public class BookController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/library")
+    @PostMapping("/deleteBook")
+    public ResponseEntity<?> deleteBook(@RequestBody BookRequest payload){
+        HttpStatus response = bookService.deleteBook(payload.getNumero());
+        return getResponse(response);
+    }
+
+    @GetMapping("/allBooks")
     public ResponseEntity<?> allBooks(){
         ArrayList<BookDTO> response = bookService.allBooks();
         return new ResponseEntity<>(response,HttpStatus.OK);

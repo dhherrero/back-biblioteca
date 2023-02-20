@@ -21,6 +21,8 @@ import java.util.ArrayList;
 public class BookService {
     private final Logger logger= LogManager.getLogger(this.getClass());
     private static DatabaseConfig db = new DatabaseConfig();
+    private static final String BOOK_NOT_CREATED= "BOOK NOT CREATED";
+    private static final String BOOK_NOT_DELETED= "BOOK NOT DELETED";
 
     private BookDTO saveInBook(ResultSet rs) throws SQLException {
         BookDTO book= BookDTO.builder().numero(rs.getInt("numero")).
@@ -28,12 +30,26 @@ public class BookService {
                 paginas(rs.getInt("numeroPaginas")).
                 edicion(rs.getInt("edicion")).fechaEdicion(rs.getDate("fechaEdicion")).
                 titulo(rs.getString("titulo")).
-                imagen(rs.getString("imagen")).ISBN(rs.getString("isbn")).
+                imagen(rs.getString("imagen")).isbn(rs.getString("isbn")).
                 autor(rs.getString("autores")).editorial(rs.getString("editorial")).
                 lenguaPublicacion(rs.getString("lenguaPublicacion")).
                 lenguaTraduccion(rs.getString("lenguaTraduccion")).formato(rs.getString("formato")).
                 genero(rs.getString("genero")).build();
         return book;
+    }
+
+    public HttpStatus deleteBook(int numero) {
+        String sql= "DELETE FROM libros WHERE numero=?";
+        try(PreparedStatement pst= db.statement(sql)) {
+            pst.setInt(1,numero);
+            pst.execute();
+        }
+        catch (SQLException throwables){
+            logger.error(throwables);
+            logger.error(BOOK_NOT_DELETED);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.OK;
     }
 
     public HttpStatus insertBook(BookDTO book){
@@ -44,7 +60,7 @@ public class BookService {
 
         Date fechaEdicion= book.getFechaEdicion();
 
-        String titulo= book.getTitulo(), imagen= book.getImagen(), isbn= book.getISBN(),
+        String titulo= book.getTitulo(), imagen= book.getImagen(), isbn= book.getIsbn(),
                 autores=book.getAutor(),editorial= book.getEditorial(),
                 lenguaPublicacion= book.getLenguaPublicacion(), lenguaTraduccion= book.getLenguaTraduccion(),
                 descripcion= book.getDescripcion(), formato= book.getFormato(), genero= book.getGenero();
@@ -62,6 +78,7 @@ public class BookService {
 
         } catch (SQLException throwables) {
             logger.error(throwables);
+            logger.error(BOOK_NOT_CREATED);
             return HttpStatus.NOT_ACCEPTABLE;
         }
             return HttpStatus.CREATED; }
@@ -80,6 +97,8 @@ public class BookService {
         }
         return listaLibros;
     }
+
+
 
     public BookDTO readBook(int numero){
         String sql ="SELECT * FROM libros where numero =?";
