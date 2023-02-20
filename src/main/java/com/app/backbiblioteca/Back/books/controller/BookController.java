@@ -33,13 +33,19 @@ public class BookController {
         return mapResponse.get(httpStatus);
     }
 
-    @PostMapping("/newBook")
-    public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
+    public BookDTO savePayloadInBook (BookRequest payload){
         BookDTO libro= BookDTO.builder().numero(payload.getNumero()).id(payload.getId()).edad(payload.getEdad()).
                 paginas(payload.getPaginas()).edicion(payload.getEdicion()).fechaEdicion(payload.getFechaEdicion()).
                 titulo(payload.getTitulo()).imagen(payload.getImagen()).isbn(payload.getIsbn()).autor(payload.getAutor()).
                 editorial(payload.getEditorial()).lenguaPublicacion(payload.getLenguaPublicacion()).descripcion(payload.getDescripcion()).
                 lenguaTraduccion(payload.getLenguaTraduccion()).formato(payload.getFormato()).genero(payload.getGenero()).build();
+        return libro;
+
+    }
+
+    @PostMapping("/newBook")
+    public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
+        BookDTO libro= savePayloadInBook(payload);
 
         HttpStatus response= bookService.insertBook(libro);
         return getResponse(response);
