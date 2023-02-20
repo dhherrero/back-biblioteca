@@ -34,15 +34,16 @@ public class BookController {
         return mapResponse.get(httpStatus);
     }
 
-    @GetMapping("/new")
-    public ResponseEntity<?> newBook(){
-        BookDTO libro2= BookDTO.builder().numero(6).id(102).edad(3).paginas(257).
-                edicion(5).fechaEdicion(Date.valueOf("2002-02-02")).titulo("Incertidumbre").
-                imagen("imagen").ISBN("ISBN").autor("Gerardo").editorial("Planeta 3").lenguaPublicacion("Francés").
-                lenguaTraduccion("Español").formato("Medio").genero("Comedia").build();
+    @PostMapping("/newBook")
+    public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
+        BookDTO libro= BookDTO.builder().numero(payload.getNumero()).id(payload.getId()).edad(payload.getEdad()).
+                paginas(payload.getPaginas()).edicion(payload.getEdicion()).fechaEdicion(payload.getFechaEdicion()).
+                titulo(payload.getTitulo()).imagen(payload.getImagen()).ISBN(payload.getISBN()).autor(payload.getAutor()).
+                editorial(payload.getEditorial()).lenguaPublicacion(payload.getLenguaPublicacion()).descripcion(payload.getDescripcion()).
+                lenguaTraduccion(payload.getLenguaTraduccion()).formato(payload.getFormato()).genero(payload.getGenero()).build();
 
 
-        HttpStatus response= bookService.insertBook(libro2);
+        HttpStatus response= bookService.insertBook(libro);
         return getResponse(response);
     }
 
@@ -56,7 +57,6 @@ public class BookController {
     public ResponseEntity<?> allBooks(){
         ArrayList<BookDTO> response = bookService.allBooks();
         return new ResponseEntity<>(response,HttpStatus.OK);
-
     }
 
 }
