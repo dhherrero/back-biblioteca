@@ -45,11 +45,7 @@ public class Prueba {
         return databaseConfig.prueba();
     }
 
-    @GetMapping("/prueba2")
-    public String probando2(){
-        BookService bookService = new BookService();
-        return bookService.prueba();
-    }
+
 
     @GetMapping("/allBooks")
     public ArrayList<BookDTO> getLibros(){

@@ -2,7 +2,7 @@ package com.app.backbiblioteca.Back.books.service;
 
 import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import com.app.backbiblioteca.Back.config.DatabaseConfig;
-import com.sun.deploy.net.HttpResponse;
+
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,21 +22,7 @@ public class BookService {
     private final Logger logger= LogManager.getLogger(this.getClass());
     private static DatabaseConfig db = new DatabaseConfig();
 
-
-    public String prueba() {
-        String sql = "SELECT  * FROM libros", result =null;
-        try(PreparedStatement pst= db.statement(sql)) {
-            ResultSet rs = pst.executeQuery();
-            if(rs.next()){
-                result= rs.getString("titulo");
-            }
-        } catch (SQLException throwables) {
-            logger.error(throwables);
-        }
-        return result;
-    }
-
-    public BookDTO saveInBook(ResultSet rs) throws SQLException {
+    private BookDTO saveInBook(ResultSet rs) throws SQLException {
         BookDTO book= BookDTO.builder().numero(rs.getInt("numero")).
                 id(rs.getInt("id")).edad(rs.getInt("edad")).
                 paginas(rs.getInt("numeroPaginas")).
@@ -95,28 +81,18 @@ public class BookService {
         return listaLibros;
     }
 
-    public BookDTO readBook(){
+    public BookDTO readBook(int numero){
         String sql ="SELECT * FROM libros where numero =?";
-        int numero=6;
-        BookDTO libro2=null;
+        BookDTO libro=null;
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setInt(1,numero);
             ResultSet rs = pst.executeQuery();
-            if(rs.next()){
-                libro2= BookDTO.builder().numero(rs.getInt("numero")).
-                        id(rs.getInt("id")).edad(rs.getInt("edad")).
-                        paginas(rs.getInt("numeroPaginas")).
-                        edicion(rs.getInt("edicion")).fechaEdicion(rs.getDate("fechaEdicion")).
-                        titulo(rs.getString("titulo")).
-                        imagen(rs.getString("imagen")).ISBN(rs.getString("isbn")).
-                        autor(rs.getString("autores")).editorial(rs.getString("editorial")).
-                        lenguaPublicacion(rs.getString("lenguaPublicacion")).
-                        lenguaTraduccion(rs.getString("lenguaTraduccion")).formato(rs.getString("formato")).
-                        genero(rs.getString("genero")).build();
+            while(rs.next()){
+                libro= saveInBook(rs);
             }
         } catch (SQLException throwables) {
             logger.error(throwables);
         }
-        return libro2;
+        return libro;
     }
 }

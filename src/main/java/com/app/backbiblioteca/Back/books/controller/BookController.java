@@ -6,10 +6,7 @@ import com.app.backbiblioteca.Back.books.service.BookService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -28,10 +25,7 @@ public class BookController {
     private static final String NOT_CREATED= "NOT CREATED";
 
 
-    @GetMapping("/prueba")
-    public String probando(){
-        return bookService.prueba();
-    }
+
 
     public ResponseEntity<?> getResponse(HttpStatus httpStatus){
         Map<HttpStatus,ResponseEntity<?>> mapResponse= new HashMap<>();
@@ -52,11 +46,10 @@ public class BookController {
         return getResponse(response);
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<?> readBook(){
-        BookDTO response = bookService.readBook();
+    @PostMapping("/getBook")
+    public ResponseEntity<?> readBook(@RequestBody BookRequest payload){
+        BookDTO response = bookService.readBook(payload.getNumero());
         return new ResponseEntity<>(response,HttpStatus.OK);
-
     }
 
     @GetMapping("/library")
