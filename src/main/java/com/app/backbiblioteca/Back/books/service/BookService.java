@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -15,6 +16,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @NoArgsConstructor
@@ -23,6 +26,20 @@ public class BookService {
     private static DatabaseConfig db = new DatabaseConfig();
     private static final String BOOK_NOT_CREATED= "BOOK NOT CREATED";
     private static final String BOOK_NOT_DELETED= "BOOK NOT DELETED";
+
+    public String getOrder(String orderBy){
+        Map<String,String> mapResponse= new HashMap<>();
+        String order=" ORDER BY ";
+        mapResponse.put("titulo",order+ "titulo");
+        mapResponse.put("autor",order+ "autor");
+        mapResponse.put("edad",order+ "edad");
+        mapResponse.put("editorial",order+ "editorial");
+        mapResponse.put("fecha",order+ "fechaEdicion");
+        mapResponse.put("genero",order+ "genero");
+        mapResponse.put("formato",order+ "formato");
+        mapResponse.put("","");
+        return mapResponse.get(orderBy);
+    }
 
     private BookDTO saveInBook(ResultSet rs) throws SQLException {
         BookDTO book= BookDTO.builder().numero(rs.getInt("numero")).
@@ -81,10 +98,11 @@ public class BookService {
             logger.error(BOOK_NOT_CREATED);
             return HttpStatus.NOT_ACCEPTABLE;
         }
-            return HttpStatus.CREATED; }
+            return HttpStatus.CREATED;
+    }
 
-    public ArrayList <BookDTO> allBooks(){
-        String sql ="SELECT * FROM libros";
+    public ArrayList <BookDTO> allBooks(String orderBy){
+        String sql ="SELECT * FROM libros" + getOrder(orderBy) ;
         ArrayList <BookDTO> listaLibros = new ArrayList<>();
         try(PreparedStatement pst= db.statement(sql)) {
             ResultSet rs = pst.executeQuery();

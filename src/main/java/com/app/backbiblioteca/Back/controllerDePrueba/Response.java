@@ -1,4 +1,4 @@
-package com.app.backbiblioteca.Back.controller;
+package com.app.backbiblioteca.Back.controllerDePrueba;
 
 import lombok.Getter;
 import lombok.Setter;

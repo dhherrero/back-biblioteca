@@ -4,19 +4,23 @@ package com.app.backbiblioteca.Back.books.controller;
 import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import com.app.backbiblioteca.Back.books.service.BookService;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/book")
 public class BookController {
+
+    private final Logger logger= LogManager.getLogger(this.getClass());
 
     private static BookService bookService= new BookService();
 
@@ -64,8 +68,8 @@ public class BookController {
     }
 
     @GetMapping("/allBooks")
-    public ResponseEntity<?> allBooks(){
-        ArrayList<BookDTO> response = bookService.allBooks();
+    public ResponseEntity<?> allBooks(@RequestParam String orderBy){
+        ArrayList<BookDTO> response = bookService.allBooks(orderBy);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
