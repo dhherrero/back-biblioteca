@@ -3,9 +3,6 @@ package com.app.backbiblioteca.Back.books.controller;
 
 import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import com.app.backbiblioteca.Back.books.service.BookService;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +16,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/book")
 public class BookController {
-
-    private final Logger logger= LogManager.getLogger(this.getClass());
 
     private static BookService bookService= new BookService();
 

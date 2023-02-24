@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.app.backbiblioteca.Back.controllerDePrueba","com.app.backbiblioteca.Back.books.controller"})
+@ComponentScan(basePackages = {"com.app.backbiblioteca.Back.controllerDePrueba","com.app.backbiblioteca.Back.books.controller","com.app.backbiblioteca.Back.users.controller"})
 public class BackBibliotecaApplication {
 
 	public static void main(String[] args) {

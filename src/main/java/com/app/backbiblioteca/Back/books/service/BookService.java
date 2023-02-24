@@ -2,15 +2,11 @@ package com.app.backbiblioteca.Back.books.service;
 
 import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import com.app.backbiblioteca.Back.config.DatabaseConfig;
-
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
