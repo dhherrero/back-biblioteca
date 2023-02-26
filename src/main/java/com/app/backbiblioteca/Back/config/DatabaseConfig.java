@@ -1,5 +1,6 @@
 package com.app.backbiblioteca.Back.config;
 
+import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import com.zaxxer.hikari.HikariDataSource;
 
 
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -19,9 +21,7 @@ import java.sql.SQLException;
 public class DatabaseConfig {
 
     private final  Logger logger= LogManager.getLogger(this.getClass());
-
-
-
+    private int contadorPool=0;
 
     public static HikariDataSource dataSource() {
 
@@ -32,15 +32,31 @@ public class DatabaseConfig {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         return dataSource;
     }
+
+    public static HikariDataSource hikariDataSource = dataSource();
+
+    public void newConeccion(){
+        hikariDataSource = dataSource();
+    }
+
     public static Connection getConnection() throws SQLException {
-        return dataSource().getConnection();
+        return hikariDataSource.getConnection();
     }
 
     public PreparedStatement statement (String sqlSentence) throws SQLException {
+        contadorPool+=1;
+        logger.info("CONTADOR A: "+ contadorPool);
         Connection dbcon= getConnection();
         PreparedStatement pst= dbcon.prepareStatement(sqlSentence);
+        if (9==contadorPool){
+            newConeccion();
+            contadorPool=0;
+        }
         return pst;
     }
+
+
+
 
 
     public String prueba() {

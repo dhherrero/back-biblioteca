@@ -55,6 +55,9 @@ public class BookController {
         if (HttpStatus.NOT_FOUND==response){
             return new ResponseEntity<>(NOT_FOUND,HttpStatus.NOT_FOUND);
         }
+        if (HttpStatus.NOT_ACCEPTABLE==response){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE,HttpStatus.NOT_ACCEPTABLE);
+        }
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
