@@ -13,4 +13,12 @@ public class UserRequest {
     String nif, nombre, password,direccion, correoElectronico, webPersonal,rol, estadoUsuario;
     int telefono;
     Date fechaNacimiento;
+
+    @Override
+    public String toString() {
+        return "UserRequest{" +
+                "nif='" + nif + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

@@ -46,6 +46,28 @@ public class UserService {
         return listaUsers;
     }
 
+    public HttpStatus loginService(UserRequest userRequest){
+        String sql ="SELECT nif,password FROM usuario WHERE nif=?";
+        logger.info("/login");
+        try(PreparedStatement pst= db.statement(sql)) {
+            pst.setString(1, userRequest.getNif());
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()){
+                String password =rs.getString("password");
+                if (password.equals(userRequest.getPassword())){
+                    logger.info("OK");
+                    return HttpStatus.OK;
+                }
+            }
+
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        logger.info("LOGIN ERROR");
+        return HttpStatus.NOT_ACCEPTABLE;
+    }
+
     public HttpStatus newUser (UserDTO userDTO){
         String sql = "INSERT INTO usuario (nif, nombre, password, fechaNacimiento, telefono, direccion, correoElectronico, webPersonal, rol, estadoUsuario) VALUES(?,?,?,?,?,?,?,?,?,?)";
         try(PreparedStatement pst= db.statement(sql)) {

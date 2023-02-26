@@ -22,6 +22,7 @@ public class BookController {
     private static final String OK= "ACTION WAS SUCCESFUL";
     private static final String CREATED= "BOOK CREATED";
     private static final String NOT_SUCCESFUL= "ACTION WAS NOT SUCCESFUL";
+    private static final String NOT_FOUND= "BOOK NOT FOUND";
 
 
     public ResponseEntity<?> getResponse(HttpStatus httpStatus){
@@ -39,20 +40,21 @@ public class BookController {
                 editorial(payload.getEditorial()).lenguaPublicacion(payload.getLenguaPublicacion()).descripcion(payload.getDescripcion()).
                 lenguaTraduccion(payload.getLenguaTraduccion()).formato(payload.getFormato()).genero(payload.getGenero()).build();
         return libro;
-
     }
 
     @PostMapping("/newBook")
     public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
         BookDTO libro= savePayloadInBook(payload);
-
         HttpStatus response= bookService.insertBook(libro);
         return getResponse(response);
     }
 
     @PostMapping("/getBook")
     public ResponseEntity<?> readBook(@RequestBody BookRequest payload){
-        BookDTO response = bookService.readBook(payload.getNumero());
+        Object response = bookService.readBook(payload.getNumero());
+        if (HttpStatus.NOT_FOUND==response){
+            return new ResponseEntity<>(NOT_FOUND,HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 

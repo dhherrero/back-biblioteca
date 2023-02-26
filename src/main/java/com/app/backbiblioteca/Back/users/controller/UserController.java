@@ -1,10 +1,9 @@
 package com.app.backbiblioteca.Back.users.controller;
 
-
-
 import com.app.backbiblioteca.Back.users.service.UserService;
 import com.app.backbiblioteca.Back.users.userDTO.UserDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
+    private final Logger logger= LogManager.getLogger(this.getClass());
     UserService userService= new UserService();
     private static final String USER_CREATED= "USER CREATED";
     private static final String NOT_SUCCESFUL= "USER NOT CREATED";
@@ -36,6 +35,12 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("login")
+    public HttpStatus login (@RequestBody UserRequest payload){
+        logger.info(payload.toString());
+        return userService.loginService(payload);
+    }
+
     @PostMapping("newUser")
     public ResponseEntity<?>  newUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).
@@ -44,6 +49,6 @@ public class UserController {
                 estadoUsuario(payload.getEstadoUsuario()).build();
         HttpStatus httpStatus = userService.newUser(user);
         return getResponse(httpStatus);
-
     }
+
 }

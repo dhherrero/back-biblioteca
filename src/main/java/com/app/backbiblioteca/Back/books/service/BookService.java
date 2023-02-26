@@ -33,7 +33,7 @@ public class BookService {
         mapResponse.put("fecha",order+ "fechaEdicion");
         mapResponse.put("genero",order+ "genero");
         mapResponse.put("formato",order+ "formato");
-        mapResponse.put("","");
+        mapResponse.put("defecto","");
         return mapResponse.get(orderBy);
     }
 
@@ -114,17 +114,23 @@ public class BookService {
 
 
 
-    public BookDTO readBook(int numero){
+    public Object readBook(int numero){
+        logger.info("/getBook: "+ numero);
         String sql ="SELECT * FROM libros where numero =?";
         BookDTO libro=null;
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setInt(1,numero);
             ResultSet rs = pst.executeQuery();
-            while(rs.next()){
+            if(rs.next()){
                 libro= saveInBook(rs);
+            }
+            else{
+                logger.info("BOOK '"+numero+"' NOT FOUND");
+                return HttpStatus.NOT_FOUND;
             }
         } catch (SQLException throwables) {
             logger.error(throwables);
+            return HttpStatus.NOT_FOUND;
         }
         return libro;
     }
