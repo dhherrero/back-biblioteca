@@ -30,6 +30,8 @@ public class DatabaseConfig {
         dataSource.setUsername("root");
         dataSource.setPassword("12345678");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setMaximumPoolSize(250);
+        dataSource.setIdleTimeout(6);
         return dataSource;
     }
 
@@ -44,14 +46,14 @@ public class DatabaseConfig {
     }
 
     public PreparedStatement statement (String sqlSentence) throws SQLException {
-        contadorPool+=1;
-        logger.info("CONTADOR A: "+ contadorPool);
         Connection dbcon= getConnection();
         PreparedStatement pst= dbcon.prepareStatement(sqlSentence);
+        //arreglillo para que no pete
+        /*contadorPool+=1;
         if (9==contadorPool){
             newConeccion();
             contadorPool=0;
-        }
+        }*/
         return pst;
     }
 
