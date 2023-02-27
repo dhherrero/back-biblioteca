@@ -10,7 +10,7 @@ import java.sql.Date;
 @Setter
 @Builder
 public class UserRequest {
-    String nif, nombre, password,direccion, correoElectronico, webPersonal,rol, estadoUsuario;
+    String nif, nombre, password,direccion, correoElectronico, webPersonal,rol;
     int telefono;
     Date fechaNacimiento;
 

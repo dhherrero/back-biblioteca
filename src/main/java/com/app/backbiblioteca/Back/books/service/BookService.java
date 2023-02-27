@@ -45,7 +45,8 @@ public class BookService {
                 fechaEdicion(rs.getDate("fechaEdicion")).lenguaPublicacion(rs.getString("lenguaPublicacion")).
                 lenguaTraduccion(rs.getString("lenguaTraduccion")).numeroPaginas(rs.getInt("numeroPaginas")).
                 descripcion(rs.getString("descripcion")).edicion(rs.getInt("edicion")).formato(rs.getString("formato")).
-                genero(rs.getString("genero")).copias(rs.getInt("copias")).build();
+                genero(rs.getString("genero")).copias(rs.getInt("copias")).
+                portada(rs.getString("portada")).imagen2(rs.getString("imagen2")).imagen3(rs.getString("imagen3")).build();
 
         return book;
     }
@@ -65,6 +66,8 @@ public class BookService {
     }
 
     public HttpStatus insertBook(BookRequest book){
+        //falta meter imagenes
+        //utilizar: SELECT LAST_INSERT_ID() as id;
         String sql= "INSERT INTO libro (titulo, autores, isbn, edad, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero, copias) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setString(1, book.getTitulo());
@@ -92,7 +95,7 @@ public class BookService {
     }
 
     public ArrayList <BookDTO> allBooks(){
-        String sql ="SELECT * FROM libro"  ;
+        String sql ="SELECT * FROM libro LEFT OUTER JOIN imagenes ON libro.id = imagenes.idLibro"  ;
         ArrayList <BookDTO> listaLibros = new ArrayList<>();
         try(PreparedStatement pst= db.statement(sql)) {
             ResultSet rs = pst.executeQuery();
@@ -111,7 +114,7 @@ public class BookService {
     public Object readBook(int id){
 
         logger.info("/getBook: "+ id);
-        String sql ="SELECT * FROM libro where id =?";
+        String sql ="SELECT * FROM libro LEFT OUTER JOIN imagenes ON libro.id = imagenes.idLibro where id =?";
         BookDTO libro=null;
 
         try(PreparedStatement pst= db.statement(sql)) {

@@ -11,7 +11,7 @@ import java.sql.Date;
 @Setter
 @Builder
 public class UserDTO {
-    String nif, nombre, password,direccion, correoElectronico, webPersonal,rol, estadoUsuario;
+    String nif, nombre, password,direccion, correoElectronico, webPersonal,rol;
     int telefono;
     Date fechaNacimiento;
 }

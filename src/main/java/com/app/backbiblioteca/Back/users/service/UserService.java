@@ -27,7 +27,7 @@ public class UserService {
                 password(rs.getString("password")).fechaNacimiento(rs.getDate("fechaNacimiento")).
                 telefono(rs.getInt("telefono")).direccion(rs.getString("direccion")).
                 correoElectronico(rs.getString("correoElectronico")).webPersonal(rs.getString("webPersonal")).
-                rol(rs.getString("rol")).estadoUsuario(rs.getString("estadoUsuario")).build();
+                rol(rs.getString("rol")).build();
         return user;
     }
 
@@ -69,13 +69,13 @@ public class UserService {
     }
 
     public HttpStatus newUser (UserDTO userDTO){
-        String sql = "INSERT INTO usuario (nif, nombre, password, fechaNacimiento, telefono, direccion, correoElectronico, webPersonal, rol, estadoUsuario) VALUES(?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO usuario (nif, nombre, password, fechaNacimiento, telefono, direccion, correoElectronico, webPersonal, rol) VALUES(?,?,?,?,?,?,?,?,?)";
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setString(1, userDTO.getNif());pst.setString(2,userDTO.getNombre());
             pst.setString(3, userDTO.getPassword());pst.setDate(4,userDTO.getFechaNacimiento());
             pst.setInt(5, userDTO.getTelefono());pst.setString(6, userDTO.getDireccion());
             pst.setString(7, userDTO.getCorreoElectronico());pst.setString(8, userDTO.getWebPersonal());
-            pst.setString(9, userDTO.getRol());pst.setString(10, userDTO.getEstadoUsuario());
+            pst.setString(9, userDTO.getRol());
 
             pst.execute();
 
