@@ -33,25 +33,17 @@ public class BookController {
         return mapResponse.get(httpStatus);
     }
 
-    public BookDTO savePayloadInBook (BookRequest payload){
-        BookDTO libro= BookDTO.builder().numero(payload.getNumero()).id(payload.getId()).edad(payload.getEdad()).
-                paginas(payload.getPaginas()).edicion(payload.getEdicion()).fechaEdicion(payload.getFechaEdicion()).
-                titulo(payload.getTitulo()).imagen(payload.getImagen()).isbn(payload.getIsbn()).autor(payload.getAutor()).
-                editorial(payload.getEditorial()).lenguaPublicacion(payload.getLenguaPublicacion()).descripcion(payload.getDescripcion()).
-                lenguaTraduccion(payload.getLenguaTraduccion()).formato(payload.getFormato()).genero(payload.getGenero()).build();
-        return libro;
-    }
+
 
     @PostMapping("/newBook")
     public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
-        BookDTO libro= savePayloadInBook(payload);
-        HttpStatus response= bookService.insertBook(libro);
+        HttpStatus response= bookService.insertBook(payload);
         return getResponse(response);
     }
 
     @PostMapping("/getBook")
     public ResponseEntity<?> readBook(@RequestBody BookRequest payload){
-        Object response = bookService.readBook(payload.getNumero());
+        Object response = bookService.readBook(payload.getId());
         if (HttpStatus.NOT_FOUND==response){
             return new ResponseEntity<>(NOT_FOUND,HttpStatus.NOT_FOUND);
         }
@@ -63,13 +55,13 @@ public class BookController {
 
     @PostMapping("/deleteBook")
     public ResponseEntity<?> deleteBook(@RequestBody BookRequest payload){
-        HttpStatus response = bookService.deleteBook(payload.getNumero());
+        HttpStatus response = bookService.deleteBook(payload.getId());
         return getResponse(response);
     }
 
     @GetMapping("/allBooks")
-    public ResponseEntity<?> allBooks(@RequestParam String orderBy){
-        ArrayList<BookDTO> response = bookService.allBooks(orderBy);
+    public ResponseEntity<?> allBooks(){
+        ArrayList<BookDTO> response = bookService.allBooks();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 

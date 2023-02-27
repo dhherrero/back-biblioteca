@@ -8,8 +8,7 @@ import java.sql.Date;
 
 @Getter
 public class BookRequest {
-    private int numero, id, edad,paginas, edicion;
+    private int id,edad,numeroPaginas, copias,edicion;
+    private String titulo, autores, isbn, editorial,lenguaPublicacion,lenguaTraduccion,descripcion,formato,genero;
     private Date fechaEdicion;
-    private String titulo, imagen, isbn, autor, editorial,
-            lenguaPublicacion,lenguaTraduccion,formato,genero,descripcion ;
 }

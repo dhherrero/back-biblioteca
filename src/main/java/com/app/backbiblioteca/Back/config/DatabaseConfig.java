@@ -31,7 +31,6 @@ public class DatabaseConfig {
         dataSource.setPassword("12345678");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(250);
-        dataSource.setIdleTimeout(6);
         return dataSource;
     }
 

@@ -51,17 +51,17 @@ public class Prueba {
     public ArrayList<BookDTO> getLibros(@RequestParam String orderBy){
         logger.info("/allBooks");
         logger.info("ORDER BY: "+ orderBy);
-        BookDTO libro1 = new BookDTO(1,101,2,256,4,Date.valueOf("2002-02-02"),"La vida es bella",
+        /*BookDTO libro1 = new BookDTO(1,101,2,256,4,Date.valueOf("2002-02-02"),"La vida es bella",
                 "https://images.cdn2.buscalibre.com/fit-in/360x360/28/e1/28e1f4a3ba4cfc7422dda5c3f96cd041.jpg",
                 "ISBN","Javier","Planeta de libros",
                 "Inglés","Español","Bueno","Drama","descripción");
         BookDTO libro2 = new BookDTO(2,102,57,26786,4,Date.valueOf("2002-05-12"),"La vida es mala",
                 "https://edit.org/images/cat/portadas-libros-big-2019101610.jpg",
                 "ISBN","Roberto","Venus",
-                "Inglés","Español","Bueno","Terror","descripción");
+                "Inglés","Español","Bueno","Terror","descripción");*/
         ArrayList <BookDTO> lista = new ArrayList<>();
-        lista.add(libro1);
-        lista.add(libro2);
+        //lista.add(libro1);
+        //lista.add(libro2);
         return lista;
     }
 }
