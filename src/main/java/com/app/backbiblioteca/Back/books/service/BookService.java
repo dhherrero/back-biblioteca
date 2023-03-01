@@ -23,18 +23,22 @@ public class BookService {
     private static DatabaseConfig db = new DatabaseConfig();
     private static final String BOOK_NOT_CREATED= "BOOK NOT CREATED";
     private static final String BOOK_NOT_DELETED= "BOOK NOT DELETED";
+    private static final String PHOTO_ERROR= "PHOTO_NOT_CREATED";
+    private static final String BOOK_CREATED= "BOOK CREATED";
+    private static final String PHOTO_CREATED= "PHOTO CREATED";
+
 
     public String getOrder(String orderBy){
         Map<String,String> mapResponse= new HashMap<>();
         String order=" ORDER BY ";
         mapResponse.put("titulo",order+ "titulo");
-        mapResponse.put("autor",order+ "autor");
+        mapResponse.put("autor",order+ "autores");
         mapResponse.put("edad",order+ "edad");
         mapResponse.put("editorial",order+ "editorial");
         mapResponse.put("fecha",order+ "fechaEdicion");
         mapResponse.put("genero",order+ "genero");
         mapResponse.put("formato",order+ "formato");
-        mapResponse.put("defecto","");
+        mapResponse.put("defecto"," ");
         return mapResponse.get(orderBy);
     }
 
@@ -65,10 +69,28 @@ public class BookService {
         return HttpStatus.OK;
     }
 
+    public HttpStatus insertImages(BookRequest book){
+        String sql = "INSERT INTO imagenes (idLibro, portada, imagen2, imagen3) VALUES(LAST_INSERT_ID(), ?, ?, ?)";
+        try(PreparedStatement pst= db.statement(sql)) {
+            pst.setString(1,book.getPortada());
+            pst.setString(2,book.getImagen2());
+            pst.setString(3,book.getImagen3());
+            pst.execute();
+            logger.info(PHOTO_CREATED);
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+            logger.error(PHOTO_ERROR);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.CREATED;
+
+    }
+
+
     public HttpStatus insertBook(BookRequest book){
-        //falta meter imagenes
-        //utilizar: SELECT LAST_INSERT_ID() as id;
-        String sql= "INSERT INTO libro (titulo, autores, isbn, edad, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero, copias) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String sql ="INSERT INTO libro (titulo, autores, isbn, edad, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero, copias,portada,imagen2,imagen3) VALUES(?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?)";
+
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setString(1, book.getTitulo());
             pst.setString(2, book.getAutores());
@@ -84,7 +106,12 @@ public class BookService {
             pst.setString(12, book.getFormato());
             pst.setString(13, book.getGenero());
             pst.setInt(14, book.getCopias());
+            pst.setString(15,book.getPortada());
+            pst.setString(16,book.getImagen2());
+            pst.setString(17,book.getImagen3());
             pst.execute();
+            logger.info(BOOK_CREATED);
+
 
         } catch (SQLException throwables) {
             logger.error(throwables);
@@ -94,8 +121,31 @@ public class BookService {
             return HttpStatus.CREATED;
     }
 
-    public ArrayList <BookDTO> allBooks(){
-        String sql ="SELECT * FROM libro LEFT OUTER JOIN imagenes ON libro.id = imagenes.idLibro"  ;
+    /**
+     *
+     * {
+     *         "titulo":null,
+     *         "autores":null,
+     *         "isbn":null,
+     *         "edad":null,
+     *         "editorial":null,
+     *         "fechaEdicion":null,
+     *         "lenguaPublicacion":null,
+     *         "lenguaTraduccion":null,
+     *         "numeroPaginas":null,
+     *         "descripcion":null,
+     *         "edicion":null,
+     *         "formato":null,
+     *         "genero":null,
+     *         "copias":null,
+     *         "portada": null,
+     *         "imagen2": null,
+     *         "imagen3": null
+     *   }
+     */
+
+    public ArrayList <BookDTO> allBooks(String orderBy){
+        String sql ="SELECT * FROM libro " + getOrder(orderBy) ;
         ArrayList <BookDTO> listaLibros = new ArrayList<>();
         try(PreparedStatement pst= db.statement(sql)) {
             ResultSet rs = pst.executeQuery();
@@ -114,7 +164,7 @@ public class BookService {
     public Object readBook(int id){
 
         logger.info("/getBook: "+ id);
-        String sql ="SELECT * FROM libro LEFT OUTER JOIN imagenes ON libro.id = imagenes.idLibro where id =?";
+        String sql ="SELECT * FROM libro  where id =?";
         BookDTO libro=null;
 
         try(PreparedStatement pst= db.statement(sql)) {

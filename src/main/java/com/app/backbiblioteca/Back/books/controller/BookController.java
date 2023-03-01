@@ -60,8 +60,8 @@ public class BookController {
     }
 
     @GetMapping("/allBooks")
-    public ResponseEntity<?> allBooks(){
-        ArrayList<BookDTO> response = bookService.allBooks();
+    public ResponseEntity<?> allBooks(@RequestParam String orderBy){
+        ArrayList<BookDTO> response = bookService.allBooks(orderBy);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
