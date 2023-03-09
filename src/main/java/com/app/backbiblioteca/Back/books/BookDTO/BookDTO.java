@@ -11,7 +11,6 @@ import java.sql.Date;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor //quitar al eliminar Prueba.java
 public class BookDTO {
     private int id,edad,numeroPaginas, copias,edicion;
     private String titulo, autores, isbn, editorial,lenguaPublicacion,lenguaTraduccion,descripcion,formato,genero;

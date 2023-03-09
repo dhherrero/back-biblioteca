@@ -23,7 +23,7 @@ public class UserController {
 
     public ResponseEntity<?> getResponse(HttpStatus httpStatus){
         Map<HttpStatus,ResponseEntity<?>> mapResponse= new HashMap<>();
-        //mapResponse.put(HttpStatus.OK,new ResponseEntity<>(OK,HttpStatus.OK));
+        mapResponse.put(HttpStatus.OK,new ResponseEntity<>("OK",HttpStatus.OK));
         mapResponse.put(HttpStatus.CREATED,new ResponseEntity<>(USER_CREATED,HttpStatus.CREATED));
         mapResponse.put(HttpStatus.NOT_ACCEPTABLE,new ResponseEntity<>(NOT_SUCCESFUL,HttpStatus.NOT_ACCEPTABLE));
         return mapResponse.get(httpStatus);
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public HttpStatus login (@RequestBody UserRequest payload){
+    public UserResponse login (@RequestBody UserRequest payload){
         logger.info(payload.toString());
         return userService.loginService(payload);
     }
@@ -47,6 +47,7 @@ public class UserController {
                 fechaNacimiento(payload.getFechaNacimiento()).telefono(payload.getTelefono()).direccion(payload.getDireccion()).
                 correoElectronico(payload.getCorreoElectronico()).webPersonal(payload.getWebPersonal()).rol(payload.getRol()).build();
         HttpStatus httpStatus = userService.newUser(user);
+
         return getResponse(httpStatus);
     }
 

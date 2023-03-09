@@ -69,26 +69,10 @@ public class BookService {
         return HttpStatus.OK;
     }
 
-    public HttpStatus insertImages(BookRequest book){
-        String sql = "INSERT INTO imagenes (idLibro, portada, imagen2, imagen3) VALUES(LAST_INSERT_ID(), ?, ?, ?)";
-        try(PreparedStatement pst= db.statement(sql)) {
-            pst.setString(1,book.getPortada());
-            pst.setString(2,book.getImagen2());
-            pst.setString(3,book.getImagen3());
-            pst.execute();
-            logger.info(PHOTO_CREATED);
-        }catch (SQLException throwables) {
-            logger.error(throwables);
-            logger.error(PHOTO_ERROR);
-            return HttpStatus.NOT_ACCEPTABLE;
-        }
-        return HttpStatus.CREATED;
 
-    }
 
 
     public HttpStatus insertBook(BookRequest book){
-
         String sql ="INSERT INTO libro (titulo, autores, isbn, edad, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero, copias,portada,imagen2,imagen3) VALUES(?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?)";
 
         try(PreparedStatement pst= db.statement(sql)) {

@@ -30,7 +30,10 @@ public class DatabaseConfig {
         dataSource.setUsername("root");
         dataSource.setPassword("12345678");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setMaximumPoolSize(250);
+        dataSource.setMaximumPoolSize(50);
+        dataSource.addDataSourceProperty("cachePrepStmts","true");
+        dataSource.addDataSourceProperty( "prepStmtCacheSize" , "250" );
+        dataSource.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
         return dataSource;
     }
 
@@ -48,33 +51,17 @@ public class DatabaseConfig {
         Connection dbcon= getConnection();
         PreparedStatement pst= dbcon.prepareStatement(sqlSentence);
         //arreglillo para que no pete
-        /*contadorPool+=1;
-        if (9==contadorPool){
+        contadorPool+=1;
+        if (50==contadorPool){
             newConeccion();
             contadorPool=0;
-        }*/
+        }
         return pst;
     }
 
 
 
 
-
-    public String prueba() {
-        logger.info("Dentroo");
-        String result=null;
-        String sql = "SELECT  * FROM libros";
-        try(PreparedStatement pst= statement(sql)){
-            ResultSet rs = pst.executeQuery();
-            if(rs.next()){
-                result= rs.getString("titulo");
-            }
-        }
-        catch (SQLException e){
-            logger.error(e);
-        }
-        return result;
-    }
 
 
 

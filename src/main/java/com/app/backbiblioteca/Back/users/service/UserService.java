@@ -4,6 +4,7 @@ package com.app.backbiblioteca.Back.users.service;
 
 import com.app.backbiblioteca.Back.config.DatabaseConfig;
 import com.app.backbiblioteca.Back.users.controller.UserRequest;
+import com.app.backbiblioteca.Back.users.controller.UserResponse;
 import com.app.backbiblioteca.Back.users.userDTO.UserDTO;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -46,8 +47,8 @@ public class UserService {
         return listaUsers;
     }
 
-    public HttpStatus loginService(UserRequest userRequest){
-        String sql ="SELECT nif,password FROM usuario WHERE nif=?";
+    public UserResponse loginService(UserRequest userRequest){
+        String sql ="SELECT nif,password,rol FROM usuario WHERE nif=?";
         logger.info("/login");
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setString(1, userRequest.getNif());
@@ -56,19 +57,21 @@ public class UserService {
                 String password =rs.getString("password");
                 if (password.equals(userRequest.getPassword())){
                     logger.info("OK");
-                    return HttpStatus.OK;
+                    return UserResponse.builder().nif(rs.getString("nif")).rol(rs.getString("rol")).
+                            estado(HttpStatus.OK).build();
                 }
             }
 
         }catch (SQLException throwables) {
             logger.error(throwables);
-            return HttpStatus.NOT_ACCEPTABLE;
+            return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
         }
         logger.info("LOGIN ERROR");
-        return HttpStatus.NOT_ACCEPTABLE;
+        return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
     public HttpStatus newUser (UserDTO userDTO){
+        logger.info("/newUser");
         String sql = "INSERT INTO usuario (nif, nombre, password, fechaNacimiento, telefono, direccion, correoElectronico, webPersonal, rol) VALUES(?,?,?,?,?,?,?,?,?)";
         try(PreparedStatement pst= db.statement(sql)) {
             pst.setString(1, userDTO.getNif());pst.setString(2,userDTO.getNombre());
@@ -76,14 +79,15 @@ public class UserService {
             pst.setInt(5, userDTO.getTelefono());pst.setString(6, userDTO.getDireccion());
             pst.setString(7, userDTO.getCorreoElectronico());pst.setString(8, userDTO.getWebPersonal());
             pst.setString(9, userDTO.getRol());
-
             pst.execute();
+            logger.info("USER CREATED");
 
         }catch (SQLException throwables) {
             logger.error(throwables);
-            return HttpStatus.NOT_ACCEPTABLE;
+            logger.info("USER  NOT CREATED");
+        return HttpStatus.NOT_ACCEPTABLE;
         }
-        return HttpStatus.CREATED;
+        return HttpStatus.OK;
     }
 
 }
