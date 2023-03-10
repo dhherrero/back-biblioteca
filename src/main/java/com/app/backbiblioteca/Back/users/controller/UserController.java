@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class UserController {
     @PostMapping("newUser")
     public ResponseEntity<?>  newUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).
-                fechaNacimiento(payload.getFechaNacimiento()).telefono(payload.getTelefono()).direccion(payload.getDireccion()).
+                fechaNacimiento(new Date(payload.getFechaNacimiento())).telefono(payload.getTelefono()).direccion(payload.getDireccion()).
                 correoElectronico(payload.getCorreoElectronico()).webPersonal(payload.getWebPersonal()).rol(payload.getRol()).build();
         HttpStatus httpStatus = userService.newUser(user);
 

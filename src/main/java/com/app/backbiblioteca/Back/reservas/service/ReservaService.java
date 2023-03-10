@@ -39,11 +39,15 @@ public class ReservaService {
         return HttpStatus.CREATED;
     }
     public ReservasDTO saveInReserva(ResultSet rs) throws SQLException {
-        return ReservasDTO.builder().idReserva(rs.getInt("id")).idLibro(rs.getInt("idLibro")).fechaFin(rs.getDate("fechaFin")).fechaInicio(rs.getDate("fechaInicio")).nifUsuario(rs.getString("nifUsuario")).estadoReserva(rs.getString("estadoReserva")).build();
+        return ReservasDTO.builder().idReserva(rs.getInt("id")).
+                idLibro(rs.getInt("idLibro")).fechaFin(rs.getDate("fechaFin")).
+                fechaInicio(rs.getDate("fechaInicio")).nifUsuario(rs.getString("nifUsuario")).
+                estadoReserva(rs.getString("estadoReserva")).titulo(rs.getString("titulo")).
+                portada(rs.getString("portada")).build();
     }
 
     public ArrayList<ReservasDTO> allReservas(){
-        String sql ="SELECT * FROM reservas";
+        String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id";
         ArrayList <ReservasDTO> listaReservas = new ArrayList<>();
         try(PreparedStatement pst= db.statement(sql)) {
             ResultSet rs = pst.executeQuery();
@@ -58,7 +62,7 @@ public class ReservaService {
     }
 
     public ArrayList<ReservasDTO> nifReservas(String nifUsuario){
-        String sql ="SELECT * FROM reservas WHERE nifUsuario='"+ nifUsuario +"'";
+        String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id WHERE reservas.nifUsuario ='"+ nifUsuario +"'";
         ArrayList <ReservasDTO> listaReservas = new ArrayList<>();
         try(PreparedStatement pst= db.statement(sql)) {
             ResultSet rs = pst.executeQuery();

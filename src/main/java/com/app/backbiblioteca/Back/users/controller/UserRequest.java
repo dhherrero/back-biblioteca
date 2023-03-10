@@ -12,7 +12,7 @@ import java.sql.Date;
 public class UserRequest {
     String nif, nombre, password,direccion, correoElectronico, webPersonal,rol;
     int telefono;
-    Date fechaNacimiento;
+    Long fechaNacimiento;
 
     @Override
     public String toString() {

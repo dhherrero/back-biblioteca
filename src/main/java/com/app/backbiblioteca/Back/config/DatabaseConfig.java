@@ -31,6 +31,9 @@ public class DatabaseConfig {
         dataSource.setPassword("12345678");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setMaximumPoolSize(50);
+        dataSource.setMaxLifetime(300);
+        dataSource.setMinimumIdle(2);
+        dataSource.setConnectionTimeout(28000);
         dataSource.addDataSourceProperty("cachePrepStmts","true");
         dataSource.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         dataSource.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );

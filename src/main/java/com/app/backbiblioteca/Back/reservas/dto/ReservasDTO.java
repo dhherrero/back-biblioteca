@@ -11,7 +11,8 @@ import java.sql.Date;
 @Builder
 public class ReservasDTO {
     private int idLibro, idReserva;
-    private String nifUsuario,estadoReserva;
+    private String nifUsuario,estadoReserva, titulo, portada;
     private Date fechaInicio, fechaFin;
+
 
 }
