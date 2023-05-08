@@ -35,6 +35,11 @@ public class UserController {
         ArrayList<UserDTO> response = userService.allUsers();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PostMapping("infoUser")
+    public UserResponse infoUser (@RequestBody UserRequest payload){
+        logger.info(payload.toString());
+        return userService.infoUser(payload);
+    }
 
     @PostMapping("login")
     public UserResponse login (@RequestBody UserRequest payload){

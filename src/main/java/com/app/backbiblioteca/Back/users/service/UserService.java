@@ -47,6 +47,30 @@ public class UserService {
         return listaUsers;
     }
 
+    public UserResponse infoUser(UserRequest userRequest){
+        String sql ="SELECT nif,nombre,password,correoElectronico, telefono, direccion FROM usuario WHERE nif=?";
+        logger.info("/infoUser");
+        try(PreparedStatement pst= db.statement(sql)) {
+            pst.setString(1, userRequest.getNif());
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()){
+                return UserResponse.builder().nif(rs.getString("nif")).
+                        nombre(rs.getNString("nombre")).
+                        password(rs.getString("password")).
+                        correoElectronico(rs.getString("correoElectronico")).
+                        telefono(rs.getInt("telefono")).
+                        direccion(rs.getString("direccion")).
+                        estado(HttpStatus.OK).build();
+            }
+        }
+        catch (SQLException throwables) {
+            logger.error(throwables);
+            return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+        logger.info("LOGIN ERROR");
+        return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
+    }
+
     public UserResponse loginService(UserRequest userRequest){
         String sql ="SELECT nif,password,rol FROM usuario WHERE nif=?";
         logger.info("/login");

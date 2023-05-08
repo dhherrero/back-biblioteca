@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @Setter
 @Builder
 public class UserResponse {
-    String nif,rol;
+    String nif,rol,nombre,direccion,correoElectronico,password;
+    int telefono;
     HttpStatus estado;
 }
