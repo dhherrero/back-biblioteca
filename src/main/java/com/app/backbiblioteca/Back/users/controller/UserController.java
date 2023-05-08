@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping("infoUser")
-    public UserResponse infoUser (@RequestBody UserRequest payload){
+    public UserResponse infoUser(@RequestBody UserRequest payload) throws SQLException {
         logger.info(payload.toString());
         return userService.infoUser(payload);
     }

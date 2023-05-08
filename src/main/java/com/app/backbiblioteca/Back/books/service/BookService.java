@@ -8,10 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,9 +55,11 @@ public class BookService {
 
     public HttpStatus deleteBook(int id) {
         String sql= "DELETE FROM libro WHERE id=?";
-        try(PreparedStatement pst= db.statement(sql)) {
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setInt(1,id);
             pst.execute();
+            dbcon.close();
+            logger.info("/deleteBook isClosed?: "+dbcon.isClosed());
         }
         catch (SQLException throwables){
             logger.error(throwables);
@@ -75,7 +75,7 @@ public class BookService {
     public HttpStatus insertBook(BookRequest book){
         String sql ="INSERT INTO libro (titulo, autores, isbn, edad, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero, copias,portada,imagen2,imagen3) VALUES(?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?)";
 
-        try(PreparedStatement pst= db.statement(sql)) {
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1, book.getTitulo());
             pst.setString(2, book.getAutores());
             pst.setString(3, book.getIsbn());
@@ -95,6 +95,8 @@ public class BookService {
             pst.setString(17,book.getImagen3());
             pst.execute();
             logger.info(BOOK_CREATED);
+            dbcon.close();
+            logger.info("/insertBook isClosed?: "+dbcon.isClosed());
 
 
         } catch (SQLException throwables) {
@@ -131,12 +133,15 @@ public class BookService {
     public ArrayList <BookDTO> allBooks(String orderBy){
         String sql ="SELECT * FROM libro " + getOrder(orderBy) ;
         ArrayList <BookDTO> listaLibros = new ArrayList<>();
-        try(PreparedStatement pst= db.statement(sql)) {
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             ResultSet rs = pst.executeQuery();
             while (rs.next()){
                 BookDTO book= saveInBook(rs);
                 listaLibros.add(book);
             }
+            dbcon.close();
+            logger.info("/allBooks isClosed?: "+dbcon.isClosed());
+
         } catch (SQLException throwables) {
             logger.error(throwables);
         }
@@ -151,16 +156,22 @@ public class BookService {
         String sql ="SELECT * FROM libro  where id =?";
         BookDTO libro=null;
 
-        try(PreparedStatement pst= db.statement(sql)) {
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setInt(1,id);
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
                 libro= saveInBook(rs);
             }
+
             else{
                 logger.info("BOOK '"+id+"' NOT FOUND");
+                dbcon.close();
+                logger.info("/readBook isClosed?: "+dbcon.isClosed());
                 return HttpStatus.NOT_FOUND;
             }
+            dbcon.close();
+            logger.info("/readBook isClosed?: "+dbcon.isClosed());
+
         } catch (SQLException throwables) {
             logger.error(throwables);
             return HttpStatus.NOT_ACCEPTABLE;

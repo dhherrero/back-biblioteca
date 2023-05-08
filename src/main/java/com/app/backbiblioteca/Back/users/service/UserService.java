@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,36 +36,44 @@ public class UserService {
     public ArrayList<UserDTO> allUsers (){
         String sql ="SELECT * FROM usuario";
         ArrayList<UserDTO> listaUsers = new ArrayList<>();
-        try(PreparedStatement pst= db.statement(sql)) {
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             ResultSet rs = pst.executeQuery();
             while (rs.next()){
                 UserDTO user= saveInUser(rs);
                 listaUsers.add(user);
             }
+            dbcon.close();
+            logger.info("/allUsers isClosed?: "+dbcon.isClosed());
         } catch (SQLException throwables) {
             logger.error(throwables);
         }
         return listaUsers;
     }
 
-    public UserResponse infoUser(UserRequest userRequest){
+    public UserResponse infoUser(UserRequest userRequest) throws SQLException {
         String sql ="SELECT nif,nombre,password,correoElectronico, telefono, direccion FROM usuario WHERE nif=?";
         logger.info("/infoUser");
-        try(PreparedStatement pst= db.statement(sql)) {
+        UserResponse user;
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1, userRequest.getNif());
             ResultSet rs = pst.executeQuery();
             if (rs.next()){
-                return UserResponse.builder().nif(rs.getString("nif")).
+                user= UserResponse.builder().nif(rs.getString("nif")).
                         nombre(rs.getNString("nombre")).
                         password(rs.getString("password")).
                         correoElectronico(rs.getString("correoElectronico")).
                         telefono(rs.getInt("telefono")).
                         direccion(rs.getString("direccion")).
                         estado(HttpStatus.OK).build();
+                dbcon.close();
+                logger.info("/infoUsers isClosed?: "+dbcon.isClosed());
+                return user;
             }
+
         }
         catch (SQLException throwables) {
             logger.error(throwables);
+
             return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
         }
         logger.info("LOGIN ERROR");
@@ -74,16 +83,22 @@ public class UserService {
     public UserResponse loginService(UserRequest userRequest){
         String sql ="SELECT nif,password,rol FROM usuario WHERE nif=?";
         logger.info("/login");
-        try(PreparedStatement pst= db.statement(sql)) {
+        UserResponse user;
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1, userRequest.getNif());
             ResultSet rs = pst.executeQuery();
             if (rs.next()){
                 String password =rs.getString("password");
                 if (password.equals(userRequest.getPassword())){
                     logger.info("OK");
-                    return UserResponse.builder().nif(rs.getString("nif")).rol(rs.getString("rol")).
+                    user= UserResponse.builder().nif(rs.getString("nif")).rol(rs.getString("rol")).
                             estado(HttpStatus.OK).build();
+                    dbcon.close();
+                    logger.info("/login isClosed?: "+dbcon.isClosed());
+                    return user;
                 }
+                dbcon.close();
+                logger.info("/login isClosed?: "+dbcon.isClosed());
             }
 
         }catch (SQLException throwables) {
@@ -97,7 +112,7 @@ public class UserService {
     public HttpStatus newUser (UserDTO userDTO){
         logger.info("/newUser");
         String sql = "INSERT INTO usuario (nif, nombre, password, fechaNacimiento, telefono, direccion, correoElectronico, webPersonal, rol) VALUES(?,?,?,?,?,?,?,?,?)";
-        try(PreparedStatement pst= db.statement(sql)) {
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1, userDTO.getNif());pst.setString(2,userDTO.getNombre());
             pst.setString(3, userDTO.getPassword());pst.setDate(4,userDTO.getFechaNacimiento());
             pst.setInt(5, userDTO.getTelefono());pst.setString(6, userDTO.getDireccion());
@@ -105,6 +120,8 @@ public class UserService {
             pst.setString(9, userDTO.getRol());
             pst.execute();
             logger.info("USER CREATED");
+            dbcon.close();
+            logger.info("/newUser isClosed?2: "+dbcon.isClosed());
 
         }catch (SQLException throwables) {
             logger.error(throwables);
