@@ -10,11 +10,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/reserva")
 public class ReservaController {
+    public ResponseEntity<?> getResponse(HttpStatus httpStatus){
+        Map<HttpStatus,ResponseEntity<?>> mapResponse= new HashMap<>();
+        mapResponse.put(HttpStatus.OK,new ResponseEntity<>("OK",HttpStatus.OK));
+        mapResponse.put(HttpStatus.NOT_ACCEPTABLE,new ResponseEntity<>("NOT_SUCCESFUL",HttpStatus.NOT_ACCEPTABLE));
+        return mapResponse.get(httpStatus);
+    }
     private static   ReservaService reservaService = new ReservaService();
     private final Logger logger= LogManager.getLogger(this.getClass());
 
@@ -38,4 +46,11 @@ public class ReservaController {
     public ResponseEntity <?> reservasDe(@RequestBody ReservasDTO reservasDTO){
         return new ResponseEntity(reservaService.nifReservas(reservasDTO.getNifUsuario()), HttpStatus.OK);
     }
+
+    @PostMapping("cancelarReserva")
+    public ResponseEntity <?> cancelar(@RequestBody ReservasDTO reservasDTO){
+        return getResponse(reservaService.cancelarRservas(reservasDTO.getIdReserva()));
+    }
+
+
 }

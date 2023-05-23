@@ -60,6 +60,7 @@ public class UserController {
         return getResponse(httpStatus);
     }
 
+
     @PostMapping("newUser")
     public ResponseEntity<?>  newUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).

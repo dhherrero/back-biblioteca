@@ -122,8 +122,16 @@ public class ReservaService {
         return false;
     }
 
-    public HttpStatus cancelarRservas (int id){
-        
+    public HttpStatus cancelarRservas (int idReserva){
+        String sql = "UPDATE reservas SET estadoReserva='inactiva' WHERE id=?";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setInt(1,idReserva);
+            pst.executeUpdate();
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.OK;
     }
 
 
