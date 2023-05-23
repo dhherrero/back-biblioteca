@@ -3,6 +3,7 @@ package com.app.backbiblioteca.Back.books.service;
 import com.app.backbiblioteca.Back.books.BookDTO.BookDTO;
 import com.app.backbiblioteca.Back.books.controller.BookRequest;
 import com.app.backbiblioteca.Back.config.DatabaseConfig;
+import com.app.backbiblioteca.Back.reservas.service.ReservaService;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -151,7 +152,6 @@ public class BookService {
 
 
     public Object readBook(int id){
-
         logger.info("/getBook: "+ id);
         String sql ="SELECT * FROM libro  where id =?";
         BookDTO libro=null;
@@ -161,8 +161,9 @@ public class BookService {
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
                 libro= saveInBook(rs);
+                ReservaService reservaService = new ReservaService();
+                libro.setDisponible(reservaService.libroDisponible(id));
             }
-
             else{
                 logger.info("BOOK '"+id+"' NOT FOUND");
                 dbcon.close();

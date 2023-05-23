@@ -18,15 +18,27 @@ import java.util.ArrayList;
 @Service
 @NoArgsConstructor
 public class ReservaService {
+
+
     private final Logger logger= LogManager.getLogger(this.getClass());
     private static DatabaseConfig db = new DatabaseConfig();
 
-    public HttpStatus newReserva(ReservasDTO reservasDTO){
+    public HttpStatus newReserva(ReservasDTO reservasDTO) throws SQLException {
+        if (!libroDisponible(reservasDTO.getIdLibro())){
+            logger.warn("No puede reservar, no hay libros disponibles");
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        if (yaLoHaReservado(reservasDTO.getNifUsuario(), reservasDTO.getIdLibro())){
+            logger.warn("No puede reservar, la persona ya lo ha reservado");
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        if (!puedeReservar(reservasDTO.getNifUsuario())){
+            logger.warn("No puede reservar, ya tiene 3 reservas");
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
         String sql = "INSERT INTO reservas (nifUsuario, idLibro, fechaInicio, fechaFin, estadoReserva) VALUES(?, ?, ?, ?, ?)";
-
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1,reservasDTO.getNifUsuario());
-
             pst.setInt(2,reservasDTO.getIdLibro());
             pst.setDate(3, reservasDTO.getFechaInicio());
             pst.setDate(4,reservasDTO.getFechaFin());
@@ -41,6 +53,76 @@ public class ReservaService {
         }
         return HttpStatus.CREATED;
     }
+    public boolean libroDisponible(int idLibro){
+        String sql = "SELECT COUNT(*) FROM reservas WHERE idLibro = ? AND estadoReserva='activa'";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setInt(1,idLibro);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()){
+                int librosReservados= rs.getInt(1);
+                int copias = copiasLibro(idLibro);
+                logger.info("Hay " + (copias-librosReservados) + " copias disponibles");
+                if ((copias-librosReservados)>0){
+                    return true;
+                }
+            }
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return false;
+    }
+
+    public int copiasLibro (int idLibro){
+        String sql = "SELECT copias  FROM libro WHERE id = ? ";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setInt(1,idLibro);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()){
+                return rs.getInt(1);
+            }
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return 0;
+    }
+
+    public boolean puedeReservar(String nifUsuario) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM reservas WHERE nifUsuario = ? AND estadoReserva = 'activa' ";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(1,nifUsuario);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()){
+                int numReservasActivas= rs.getInt(1);
+                if (numReservasActivas<3){
+                    return true;
+                }
+            }
+            dbcon.close();
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return false;
+    }
+    public boolean yaLoHaReservado(String nifUsuario, int idLibro) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM reservas WHERE nifUsuario = ? AND idLibro = ? and estadoReserva = 'activa';";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(1,nifUsuario);
+            pst.setInt(2,idLibro);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()){
+                int numReservasActivas= rs.getInt(1);
+                if (numReservasActivas>=1){
+                    return true;
+                }
+            }
+            dbcon.close();
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return false;
+    }
+
+
     public ReservasDTO saveInReserva(ResultSet rs) throws SQLException {
         return ReservasDTO.builder().idReserva(rs.getInt("id")).
                 idLibro(rs.getInt("idLibro")).fechaFin(rs.getDate("fechaFin")).

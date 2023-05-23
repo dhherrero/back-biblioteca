@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/reserva")
@@ -17,9 +19,14 @@ public class ReservaController {
     private final Logger logger= LogManager.getLogger(this.getClass());
 
     @PostMapping("/new")
-    public ResponseEntity <?> newReserva(@RequestBody ReservasDTO reservasDTO){
+    public ResponseEntity <?> newReserva(@RequestBody ReservasDTO reservasDTO) throws SQLException {
         logger.info("idlibroo: "+ reservasDTO.getIdLibro());
-        return new ResponseEntity<>("CREATED",reservaService.newReserva(reservasDTO));
+        HttpStatus httpStatus = reservaService.newReserva(reservasDTO);
+        String mensaje = "NOT ACCEPTABLE";
+        if (httpStatus.equals(HttpStatus.CREATED)){
+            mensaje= "CREATED";
+        }
+        return new ResponseEntity<>(mensaje,httpStatus);
     }
 
     @PostMapping("/all")
