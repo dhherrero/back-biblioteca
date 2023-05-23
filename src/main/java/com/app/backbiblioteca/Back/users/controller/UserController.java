@@ -54,6 +54,12 @@ public class UserController {
         return getResponse(httpStatus);
     }
 
+    @PostMapping("deleteUser")
+    public ResponseEntity<?> deleteUser(@RequestBody UserRequest payload) throws SQLException {
+        HttpStatus httpStatus = userService.deleteUser(payload.getNif());
+        return getResponse(httpStatus);
+    }
+
     @PostMapping("newUser")
     public ResponseEntity<?>  newUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).
@@ -63,5 +69,7 @@ public class UserController {
 
         return getResponse(httpStatus);
     }
+
+
 
 }

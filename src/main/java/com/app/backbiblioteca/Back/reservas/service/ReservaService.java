@@ -122,6 +122,10 @@ public class ReservaService {
         return false;
     }
 
+    public HttpStatus cancelarRservas (int id){
+        
+    }
+
 
     public ReservasDTO saveInReserva(ResultSet rs) throws SQLException {
         return ReservasDTO.builder().idReserva(rs.getInt("id")).

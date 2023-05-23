@@ -45,7 +45,19 @@ public class UserService {
         }
         return HttpStatus.OK;
 
+    }
 
+    public HttpStatus deleteUser(String nif){
+        String sql = "DELETE FROM usuario WHERE nif=?";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(1, nif);
+            pst.execute();
+            logger.info("USUARIO: "+ nif+ " BORRADO") ;
+        } catch (SQLException throwables) {
+            logger.error(throwables);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.OK;
     }
 
     public ArrayList<UserDTO> allUsers (){
