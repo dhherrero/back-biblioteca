@@ -52,5 +52,11 @@ public class ReservaController {
         return getResponse(reservaService.cancelarRservas(reservasDTO.getIdReserva()));
     }
 
+    @PostMapping("ampliarReserva")
+    public ResponseEntity <?> ampliar(@RequestBody ReservasDTO reservasDTO){
+        return getResponse(reservaService.ampliarReserva(reservasDTO.getIdReserva()));
+    }
+
+
 
 }

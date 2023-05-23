@@ -9,10 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Service
@@ -132,6 +130,37 @@ public class ReservaService {
             return HttpStatus.NOT_ACCEPTABLE;
         }
         return HttpStatus.OK;
+    }
+    public LocalDate getFechaFin (int idReserva){
+        String sql = "SELECT fechaFin FROM reservas WHERE id=?";
+        LocalDate fechaFin = null;
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setInt(1,idReserva);
+            ResultSet rs =pst.executeQuery();
+            if (rs.next()){
+                fechaFin = rs.getDate("fechaFin").toLocalDate();
+            }
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+        }
+        return fechaFin;
+    }
+
+    public HttpStatus ampliarReserva (int idReserva){
+        String sql = "UPDATE reservas SET fechaFin=? WHERE id=?";
+        LocalDate fechaFin = getFechaFin(idReserva);
+        LocalDate nuevaFecha = fechaFin.plusDays(30);
+        Date fechaNueva = Date.valueOf(nuevaFecha);
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setDate(1,fechaNueva);
+            pst.setInt(2, idReserva);
+            pst.executeUpdate();
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.OK;
+
     }
 
 
