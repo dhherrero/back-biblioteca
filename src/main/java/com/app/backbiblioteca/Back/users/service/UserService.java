@@ -33,6 +33,21 @@ public class UserService {
         return user;
     }
 
+    public HttpStatus changePassword (String nif, String newPassword) throws SQLException {
+        String sql = "UPDATE usuario SET  password=? WHERE nif=?";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(1,newPassword);
+            pst.setString(2,nif);
+            pst.executeUpdate();
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.OK;
+
+
+    }
+
     public ArrayList<UserDTO> allUsers (){
         String sql ="SELECT * FROM usuario";
         ArrayList<UserDTO> listaUsers = new ArrayList<>();

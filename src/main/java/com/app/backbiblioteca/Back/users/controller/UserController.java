@@ -48,6 +48,12 @@ public class UserController {
         return userService.loginService(payload);
     }
 
+    @PostMapping("changePassword")
+    public ResponseEntity<?> changePassword (@RequestBody UserRequest payload) throws SQLException {
+        HttpStatus httpStatus = userService.changePassword(payload.getNif(), payload.getPassword());
+        return getResponse(httpStatus);
+    }
+
     @PostMapping("newUser")
     public ResponseEntity<?>  newUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).
