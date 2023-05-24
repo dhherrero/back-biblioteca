@@ -71,6 +71,14 @@ public class UserController {
         return getResponse(httpStatus);
     }
 
+    @PostMapping("updateUser")
+    public ResponseEntity<?> updateUser(@RequestBody UserRequest payload){
+        UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).telefono(payload.getTelefono()).direccion(payload.getDireccion()).
+                correoElectronico(payload.getCorreoElectronico()).webPersonal(payload.getWebPersonal()).build();
+        HttpStatus httpStatus = userService.updateUser(user);
+        return getResponse(httpStatus);
+    }
+
 
 
 }

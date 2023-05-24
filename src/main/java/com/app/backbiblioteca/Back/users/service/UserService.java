@@ -158,4 +158,24 @@ public class UserService {
         return HttpStatus.OK;
     }
 
+    public HttpStatus updateUser (UserDTO userDTO){
+        logger.info("/updateUser");
+        String sql="UPDATE usuario SET nombre=?, password=?, correoElectronico=?, telefono=?, direccion=?, webPersonal=? WHERE nif=?";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(7, userDTO.getNif());pst.setString(1,userDTO.getNombre());
+            pst.setString(2, userDTO.getPassword());
+            pst.setInt(4, userDTO.getTelefono());pst.setString(5, userDTO.getDireccion());
+            pst.setString(3, userDTO.getCorreoElectronico());pst.setString(6, userDTO.getWebPersonal());
+            pst.executeUpdate();
+            logger.info("USER updated");
+            dbcon.close();
+        }catch (SQLException throwables) {
+            logger.error(throwables);
+            logger.info("USER  NOT UPDATED");
+            return HttpStatus.NOT_ACCEPTABLE;
+        }
+        return HttpStatus.OK;
+
+    }
+
 }
