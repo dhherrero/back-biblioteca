@@ -149,23 +149,40 @@ public class BookService {
         return listaLibros;
     }
 
+    public boolean userCanReservBook(int idLibro, String nifUsuario){
+        String sql= "SELECT COUNT(*) AS count from reservas where nifUsuario =? AND idLibro =? AND estadoReserva ='activa'";
+        try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(1,nifUsuario);
+            pst.setInt(2,idLibro);
+            ResultSet rs = pst.executeQuery();
+            if(rs.next()){
+                int result= rs.getInt("count");
+                if (result>=1) return  false;
+            }
+        }catch (SQLException throwables){
+            logger.error(throwables);
+            return false; }
+        return  true;
+    }
 
 
-    public Object readBook(int id){
-        logger.info("/getBook: "+ id);
+
+    public Object readBook(BookRequest payload){
+        logger.info("/getBook: "+ payload.getId());
         String sql ="SELECT * FROM libro  where id =?";
         BookDTO libro=null;
 
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
-            pst.setInt(1,id);
+            pst.setInt(1,payload.getId());
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
                 libro= saveInBook(rs);
                 ReservaService reservaService = new ReservaService();
-                libro.setDisponible(reservaService.libroDisponible(id));
+                libro.setDisponible(reservaService.libroDisponible(payload.getId()));
+                libro.setCanReserve(userCanReservBook(payload.getId(),payload.getNifUsuario()));
             }
             else{
-                logger.info("BOOK '"+id+"' NOT FOUND");
+                logger.info("BOOK '"+payload.getId()+"' NOT FOUND");
                 dbcon.close();
                 logger.info("/readBook isClosed?: "+dbcon.isClosed());
                 return HttpStatus.NOT_FOUND;

@@ -12,6 +12,7 @@ public class BookRequest {
     private String titulo, autores, isbn, editorial,lenguaPublicacion,lenguaTraduccion,descripcion,formato,genero;
     private Date fechaEdicion;
     private String portada, imagen2,imagen3;
+    private String nifUsuario;
 
     @Override
     public String toString() {

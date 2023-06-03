@@ -43,7 +43,7 @@ public class BookController {
 
     @PostMapping("/getBook")
     public ResponseEntity<?> readBook(@RequestBody BookRequest payload){
-        Object response = bookService.readBook(payload.getId());
+        Object response = bookService.readBook(payload);
         if (HttpStatus.NOT_FOUND==response){
             return new ResponseEntity<>(NOT_FOUND,HttpStatus.NOT_FOUND);
         }
