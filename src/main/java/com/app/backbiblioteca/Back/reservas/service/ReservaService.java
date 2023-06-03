@@ -22,6 +22,9 @@ public class ReservaService {
     private static DatabaseConfig db = new DatabaseConfig();
 
     public HttpStatus newReserva(ReservasDTO reservasDTO) throws SQLException {
+        LocalDate fechaInicio = LocalDate.now();
+        LocalDate fechaFin = fechaInicio.plusDays(30);
+
         if (!libroDisponible(reservasDTO.getIdLibro())){
             logger.warn("No puede reservar, no hay libros disponibles");
             return HttpStatus.NOT_ACCEPTABLE;
@@ -38,8 +41,8 @@ public class ReservaService {
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1,reservasDTO.getNifUsuario());
             pst.setInt(2,reservasDTO.getIdLibro());
-            pst.setDate(3, reservasDTO.getFechaInicio());
-            pst.setDate(4,reservasDTO.getFechaFin());
+            pst.setDate(3, Date.valueOf(fechaInicio));
+            pst.setDate(4,Date.valueOf(fechaFin));
             pst.setString(5, "activa");
             pst.execute();
             dbcon.close();

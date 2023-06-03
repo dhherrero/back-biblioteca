@@ -55,6 +55,7 @@ public class BookController {
 
     @PostMapping("/deleteBook")
     public ResponseEntity<?> deleteBook(@RequestBody BookRequest payload){
+
         HttpStatus response = bookService.deleteBook(payload.getId());
         return getResponse(response);
     }
