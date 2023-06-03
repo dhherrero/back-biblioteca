@@ -193,9 +193,10 @@ public class ReservaService {
     }
 
     public ArrayList<ReservasDTO> nifReservas(String nifUsuario){
-        String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id WHERE reservas.nifUsuario ='"+ nifUsuario +"'";
+        String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id WHERE reservas.nifUsuario=? AND reservas.estadoReserva='activa'";
         ArrayList <ReservasDTO> listaReservas = new ArrayList<>();
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
+            pst.setString(1,nifUsuario);
             ResultSet rs = pst.executeQuery();
             while (rs.next()){
                 ReservasDTO reserva= saveInReserva(rs);
