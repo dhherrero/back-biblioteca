@@ -24,6 +24,12 @@ public class UserService {
     private final Logger logger= LogManager.getLogger(this.getClass());
     private static DatabaseConfig db = new DatabaseConfig();
 
+    /**
+     * Método encargado de guardar en un objeto tipo UserDTO el ResultSet devuelto por la base de datos
+     * @param rs
+     * @return el usuario
+     * @throws SQLException
+     */
     public UserDTO saveInUser(ResultSet rs) throws SQLException {
         UserDTO user = UserDTO.builder().nif(rs.getString("nif")).nombre(rs.getString("nombre")).
                 password(rs.getString("password")).fechaNacimiento(rs.getDate("fechaNacimiento")).
@@ -33,6 +39,13 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Método para cambiar la contraseña en la base de datos
+     * @param nif
+     * @param newPassword
+     * @return confimación del cambio de la contraseña
+     * @throws SQLException
+     */
     public HttpStatus changePassword (String nif, String newPassword) throws SQLException {
         String sql = "UPDATE usuario SET  password=? WHERE nif=?";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -47,6 +60,11 @@ public class UserService {
 
     }
 
+    /**
+     * Método que borra un usuario en la base de datos
+     * @param nif
+     * @return confirmación de si ha borrado el usuario
+     */
     public HttpStatus deleteUser(String nif){
         String sql = "DELETE FROM usuario WHERE nif=?";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -60,6 +78,10 @@ public class UserService {
         return HttpStatus.OK;
     }
 
+    /**
+     * Método que devuelve un listado de los usuarios de la base de datos
+     * @return lista de usuarios
+     */
     public ArrayList<UserDTO> allUsers (){
         String sql ="SELECT * FROM usuario";
         ArrayList<UserDTO> listaUsers = new ArrayList<>();
@@ -77,6 +99,13 @@ public class UserService {
         return listaUsers;
     }
 
+
+    /**
+     * Método para que devuelva la información de un usuario de la base de datos
+     * @param userRequest
+     * @return  usuario
+     * @throws SQLException
+     */
     public UserResponse infoUser(UserRequest userRequest) throws SQLException {
         String sql ="SELECT nif,nombre,password,correoElectronico, telefono, direccion FROM usuario WHERE nif=?";
         logger.info("/infoUser");
@@ -107,6 +136,11 @@ public class UserService {
         return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
+    /**
+     * Método encargado de realizar la lógica del login
+     * @param userRequest
+     * @return confirmación de si se ha logueado
+     */
     public UserResponse loginService(UserRequest userRequest){
         String sql ="SELECT nif,password,rol FROM usuario WHERE nif=?";
         logger.info("/login");
@@ -136,6 +170,11 @@ public class UserService {
         return UserResponse.builder().estado(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
+    /**
+     * Introduce un nuevo usuario en la base de datos
+     * @param userDTO
+     * @return confirmación si se ha introducido el usuario en la base de datos
+     */
     public HttpStatus newUser (UserDTO userDTO){
         logger.info("/newUser");
         String sql = "INSERT INTO usuario (nif, nombre, password, fechaNacimiento, telefono, direccion, correoElectronico, webPersonal, rol) VALUES(?,?,?,?,?,?,?,?,?)";
@@ -158,6 +197,11 @@ public class UserService {
         return HttpStatus.OK;
     }
 
+    /**
+     * Actualiza un usuario en la base de datos
+     * @param userDTO
+     * @return confirmación de si se ha realizado correctamente
+     */
     public HttpStatus updateUser (UserDTO userDTO){
         logger.info("/updateUser");
         String sql="UPDATE usuario SET nombre=?, password=?, correoElectronico=?, telefono=?, direccion=?, webPersonal=? WHERE nif=?";

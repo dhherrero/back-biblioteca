@@ -21,6 +21,12 @@ public class ReservaService {
     private final Logger logger= LogManager.getLogger(this.getClass());
     private static DatabaseConfig db = new DatabaseConfig();
 
+    /**
+     * Introduce una nueva reserva en la base de datos
+     * @param reservasDTO
+     * @return confrmación si se ha añadido correctamente
+     * @throws SQLException
+     */
     public HttpStatus newReserva(ReservasDTO reservasDTO) throws SQLException {
         LocalDate fechaInicio = LocalDate.now();
         LocalDate fechaFin = fechaInicio.plusDays(30);
@@ -54,6 +60,12 @@ public class ReservaService {
         }
         return HttpStatus.CREATED;
     }
+
+    /**
+     * Comprueba si un libro esta disponible para reservar
+     * @param idLibro
+     * @return true or false
+     */
     public boolean libroDisponible(int idLibro){
         String sql = "SELECT COUNT(*) FROM reservas WHERE idLibro = ? AND estadoReserva='activa'";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -73,6 +85,11 @@ public class ReservaService {
         return false;
     }
 
+    /**
+     * Comprueba el numero de copias de un libro
+     * @param idLibro
+     * @return número de copias
+     */
     public int copiasLibro (int idLibro){
         String sql = "SELECT copias  FROM libro WHERE id = ? ";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -87,6 +104,12 @@ public class ReservaService {
         return 0;
     }
 
+    /**
+     * Un usuario puede reservar si tiene menos de 3 reservas, este método se enarga de comprobar si puede reservar
+     * @param nifUsuario
+     * @return boolean puede reservar
+     * @throws SQLException
+     */
     public boolean puedeReservar(String nifUsuario) throws SQLException {
         String sql = "SELECT COUNT(*) FROM reservas WHERE nifUsuario = ? AND estadoReserva = 'activa' ";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -104,6 +127,14 @@ public class ReservaService {
         }
         return false;
     }
+
+    /**
+     * Comprueba si un usuario ha reservadoo un libro
+     * @param nifUsuario
+     * @param idLibro
+     * @return boolean de libro reservadi
+     * @throws SQLException
+     */
     public boolean yaLoHaReservado(String nifUsuario, int idLibro) throws SQLException {
         String sql = "SELECT COUNT(*) FROM reservas WHERE nifUsuario = ? AND idLibro = ? and estadoReserva = 'activa';";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {

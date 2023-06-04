@@ -31,36 +31,68 @@ public class UserController {
         return mapResponse.get(httpStatus);
     }
 
+    /**
+     * Endpoint que devuelve los ususarios
+     * @return un listado de los usuarisos
+     */
     @GetMapping("/allUsers")
     public ResponseEntity<?>  getUsers(){
         ArrayList<UserDTO> response = userService.allUsers();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    /**
+     * Endpoint que devuelve la información a cerca de un usuario
+     * @param payload
+     * @return información de un usuario
+     * @throws SQLException
+     */
     @PostMapping("infoUser")
     public UserResponse infoUser(@RequestBody UserRequest payload) throws SQLException {
         logger.info(payload.toString());
         return userService.infoUser(payload);
     }
 
+    /**
+     * Endpoint para loguearse
+     * @param payload
+     * @return si los parámetros introducidos son los correctos
+     */
     @PostMapping("login")
     public UserResponse login (@RequestBody UserRequest payload){
         logger.info(payload.toString());
         return userService.loginService(payload);
     }
 
+    /**
+     * Endpoint para cambiar la contraseña
+     * @param payload
+     * @return
+     * @throws SQLException
+     */
     @PostMapping("changePassword")
     public ResponseEntity<?> changePassword (@RequestBody UserRequest payload) throws SQLException {
         HttpStatus httpStatus = userService.changePassword(payload.getNif(), payload.getPassword());
         return getResponse(httpStatus);
     }
 
+    /**
+     * Enpoint encargado de borrar un usuario
+     * @param payload
+     * @return confirmación del borrado
+     * @throws SQLException
+     */
     @PostMapping("deleteUser")
     public ResponseEntity<?> deleteUser(@RequestBody UserRequest payload) throws SQLException {
         HttpStatus httpStatus = userService.deleteUser(payload.getNif());
         return getResponse(httpStatus);
     }
 
-
+    /**
+     *  Endpoint encargado de crear un usuario
+     * @param payload
+     * @return
+     */
     @PostMapping("newUser")
     public ResponseEntity<?>  newUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).
@@ -71,6 +103,11 @@ public class UserController {
         return getResponse(httpStatus);
     }
 
+    /**
+     * Endpoint encargado de actualizar un usuario
+     * @param payload
+     * @return
+     */
     @PostMapping("updateUser")
     public ResponseEntity<?> updateUser(@RequestBody UserRequest payload){
         UserDTO user = UserDTO.builder().nif(payload.getNif()).nombre(payload.getNombre()).password(payload.getPassword()).telefono(payload.getTelefono()).direccion(payload.getDireccion()).
