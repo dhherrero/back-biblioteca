@@ -232,7 +232,7 @@ public class ReservaService {
      * @return listado de las reservas
      */
     public ArrayList<ReservasDTO> allReservas(){
-        String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id";
+        String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id WHERE reservas.estadoReserva='activa'";
         ArrayList <ReservasDTO> listaReservas = new ArrayList<>();
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             ResultSet rs = pst.executeQuery();
