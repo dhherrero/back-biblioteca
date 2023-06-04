@@ -23,6 +23,10 @@ public class DatabaseConfig {
     private final  Logger logger= LogManager.getLogger(this.getClass());
     private int contadorPool=0;
 
+    /**
+     * Configuraciónn del datasource de la  base de datos
+     * @return HikariDataSource
+     */
     public static HikariDataSource dataSource() {
 
         HikariDataSource dataSource = new HikariDataSource();
@@ -46,26 +50,13 @@ public class DatabaseConfig {
         hikariDataSource = dataSource();
     }
 
+    /**
+     * Método encargad de devolver la conexión a la base de datos
+     * @return conexión a la bbdd
+     * @throws SQLException
+     */
     public  Connection getConnection() throws SQLException {
         return hikariDataSource.getConnection();
     }
-
-    public PreparedStatement statement (String sqlSentence) throws SQLException {
-        Connection dbcon= getConnection();
-        PreparedStatement pst= dbcon.prepareStatement(sqlSentence);
-        //arreglillo para que no pete
-        contadorPool+=1;
-        if (50==contadorPool){
-            newConeccion();
-            contadorPool=0;
-        }
-        return pst;
-    }
-
-
-
-
-
-
 
 }
