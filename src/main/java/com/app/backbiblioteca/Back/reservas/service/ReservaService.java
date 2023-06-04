@@ -154,6 +154,11 @@ public class ReservaService {
         return false;
     }
 
+    /**
+     * Cambia el estado de una reserva activa a inactiva
+     * @param idReserva
+     * @return confirmación de que el cambio se ha realizado con éxito
+     */
     public HttpStatus cancelarRservas (int idReserva){
         String sql = "UPDATE reservas SET estadoReserva='inactiva' WHERE id=?";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -165,6 +170,12 @@ public class ReservaService {
         }
         return HttpStatus.OK;
     }
+
+    /**
+     * Obtiene la fehcha de finalización de una reserva
+     * @param idReserva
+     * @return fecha
+     */
     public LocalDate getFechaFin (int idReserva){
         String sql = "SELECT fechaFin FROM reservas WHERE id=?";
         LocalDate fechaFin = null;
@@ -180,6 +191,11 @@ public class ReservaService {
         return fechaFin;
     }
 
+    /**
+     * Amplia la fecha de finalización de un reserva en la base de datos
+     * @param idReserva
+     * @return confirmación de si se ha realizado la operación con éxito
+     */
     public HttpStatus ampliarReserva (int idReserva){
         String sql = "UPDATE reservas SET fechaFin=? WHERE id=?";
         LocalDate fechaFin = getFechaFin(idReserva);
@@ -197,7 +213,12 @@ public class ReservaService {
 
     }
 
-
+    /**
+     * Almacena un resultset en un objeto de tipo reservaDTO
+     * @param rs
+     * @return objeto de tipo reserva
+     * @throws SQLException
+     */
     public ReservasDTO saveInReserva(ResultSet rs) throws SQLException {
         return ReservasDTO.builder().idReserva(rs.getInt("id")).
                 idLibro(rs.getInt("idLibro")).fechaFin(rs.getDate("fechaFin")).
@@ -206,6 +227,10 @@ public class ReservaService {
                 portada(rs.getString("portada")).build();
     }
 
+    /**
+     * Obtiene un listado de todas las reservas en la base de datos
+     * @return listado de las reservas
+     */
     public ArrayList<ReservasDTO> allReservas(){
         String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id";
         ArrayList <ReservasDTO> listaReservas = new ArrayList<>();
@@ -223,6 +248,11 @@ public class ReservaService {
         return listaReservas;
     }
 
+    /**
+     * Devuelve un listado de las reservas activas de un usuario
+     * @param nifUsuario
+     * @return listado de reservas
+     */
     public ArrayList<ReservasDTO> nifReservas(String nifUsuario){
         String sql ="SELECT reservas.* , libro.titulo, libro.portada  FROM reservas JOIN libro  ON reservas.idLibro = libro.id WHERE reservas.nifUsuario=? AND reservas.estadoReserva='activa'";
         ArrayList <ReservasDTO> listaReservas = new ArrayList<>();
