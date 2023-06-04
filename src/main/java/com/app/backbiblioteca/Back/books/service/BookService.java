@@ -155,7 +155,7 @@ public class BookService {
      * @param nifUsuario
      * @return boolean
      */
-    public boolean userCanReservBook(int idLibro, String nifUsuario){
+    public boolean userCanReservBook(int idLibro, String nifUsuario) throws SQLException {
         String sql= "SELECT COUNT(*) AS count from reservas where nifUsuario =? AND idLibro =? AND estadoReserva ='activa'";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
             pst.setString(1,nifUsuario);
@@ -168,6 +168,8 @@ public class BookService {
         }catch (SQLException throwables){
             logger.error(throwables);
             return false; }
+        ReservaService reservaService = new ReservaService();
+        if(!reservaService.puedeReservar(nifUsuario)) return false;
         return  true;
     }
 
