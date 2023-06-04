@@ -26,7 +26,11 @@ public class BookService {
     private static final String BOOK_CREATED= "BOOK CREATED";
     private static final String PHOTO_CREATED= "PHOTO CREATED";
 
-
+    /**
+     * Método que devuelve la columna correspondiente a la base de datos
+     * @param orderBy
+     * @return string
+     */
     public String getOrder(String orderBy){
         Map<String,String> mapResponse= new HashMap<>();
         String order=" ORDER BY ";
@@ -41,6 +45,12 @@ public class BookService {
         return mapResponse.get(orderBy);
     }
 
+    /**
+     * Método que guarda un ResultSet en un objeto tipo BookDTO
+     * @param rs
+     * @return objeto tipo BookDTO
+     * @throws SQLException
+     */
     private BookDTO saveInBook(ResultSet rs) throws SQLException {
         BookDTO book= BookDTO.builder().id(rs.getInt("id")).titulo(rs.getString("titulo")).
                 autores(rs.getString("autores")).isbn(rs.getString("isbn")).
@@ -54,6 +64,11 @@ public class BookService {
         return book;
     }
 
+    /**
+     * Método para borrar un libro de la base de datos
+     * @param id
+     * @return confirmación del libro borrado con éxito
+     */
     public HttpStatus deleteBook(int id) {
         String sql= "DELETE FROM libro WHERE id=?";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -71,8 +86,11 @@ public class BookService {
     }
 
 
-
-
+    /**
+     * Método para introducir un libro en la base de datos
+     * @param book
+     * @return confirmación del libro añadido con éxito
+     */
     public HttpStatus insertBook(BookRequest book){
         String sql ="INSERT INTO libro (titulo, autores, isbn, edad, editorial, fechaEdicion, lenguaPublicacion, lenguaTraduccion, numeroPaginas, descripcion, edicion, formato, genero, copias,portada,imagen2,imagen3) VALUES(?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?)";
 
@@ -109,28 +127,10 @@ public class BookService {
     }
 
     /**
-     *
-     * {
-     *         "titulo":null,
-     *         "autores":null,
-     *         "isbn":null,
-     *         "edad":null,
-     *         "editorial":null,
-     *         "fechaEdicion":null,
-     *         "lenguaPublicacion":null,
-     *         "lenguaTraduccion":null,
-     *         "numeroPaginas":null,
-     *         "descripcion":null,
-     *         "edicion":null,
-     *         "formato":null,
-     *         "genero":null,
-     *         "copias":null,
-     *         "portada": null,
-     *         "imagen2": null,
-     *         "imagen3": null
-     *   }
+     *Método que obtiene todos los libros de la base de datos, además puede ordenarlos en función del valor introducido
+     * @param orderBy
+     * @return listado de libros
      */
-
     public ArrayList <BookDTO> allBooks(String orderBy){
         String sql ="SELECT * FROM libro " + getOrder(orderBy) ;
         ArrayList <BookDTO> listaLibros = new ArrayList<>();
@@ -149,6 +149,12 @@ public class BookService {
         return listaLibros;
     }
 
+    /**
+     * Método que comprueba si un usuario puede reservar un libro
+     * @param idLibro
+     * @param nifUsuario
+     * @return boolean
+     */
     public boolean userCanReservBook(int idLibro, String nifUsuario){
         String sql= "SELECT COUNT(*) AS count from reservas where nifUsuario =? AND idLibro =? AND estadoReserva ='activa'";
         try(Connection dbcon= db.hikariDataSource.getConnection(); PreparedStatement pst= dbcon.prepareStatement(sql)) {
@@ -166,7 +172,11 @@ public class BookService {
     }
 
 
-
+    /**
+     * Método que devuelva la información de un libro
+     * @param payload
+     * @return book
+     */
     public Object readBook(BookRequest payload){
         logger.info("/getBook: "+ payload.getId());
         String sql ="SELECT * FROM libro  where id =?";

@@ -24,7 +24,11 @@ public class BookController {
     private static final String NOT_SUCCESFUL= "ACTION WAS NOT SUCCESFUL";
     private static final String NOT_FOUND= "BOOK NOT FOUND";
 
-
+    /**
+     * Obtiene la response en función del httpstatus
+     * @param httpStatus
+     * @return ResponseEntity
+     */
     public ResponseEntity<?> getResponse(HttpStatus httpStatus){
         Map<HttpStatus,ResponseEntity<?>> mapResponse= new HashMap<>();
         mapResponse.put(HttpStatus.OK,new ResponseEntity<>(OK,HttpStatus.OK));
@@ -34,13 +38,22 @@ public class BookController {
     }
 
 
-
+    /**
+     * Endpoint encargado de crear un nuevo libro
+     * @param payload
+     * @return Libro
+     */
     @PostMapping("/newBook")
     public ResponseEntity<?> newBook(@RequestBody BookRequest payload){
         HttpStatus response= bookService.insertBook(payload);
         return getResponse(response);
     }
 
+    /**
+     * Endpoint encargado de obtener un libro especifico
+     * @param payload
+     * @return el libro
+     */
     @PostMapping("/getBook")
     public ResponseEntity<?> readBook(@RequestBody BookRequest payload){
         Object response = bookService.readBook(payload);
@@ -53,6 +66,11 @@ public class BookController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    /**
+     * Endpoint encargado de eliminar un libro
+     * @param payload
+     * @return confirmación de operación realizada con éxito
+     */
     @PostMapping("/deleteBook")
     public ResponseEntity<?> deleteBook(@RequestBody BookRequest payload){
 
@@ -60,6 +78,11 @@ public class BookController {
         return getResponse(response);
     }
 
+    /**
+     * Enpoint encargdo de devolver todos los  libros
+     * @param orderBy
+     * @return lista de libros
+     */
     @GetMapping("/allBooks")
     public ResponseEntity<?> allBooks(@RequestParam String orderBy){
         ArrayList<BookDTO> response = bookService.allBooks(orderBy);
