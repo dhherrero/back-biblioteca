@@ -1,0 +1,11 @@
+com.app.backbiblioteca.Back.Biblioteca
+com.app.backbiblioteca.Back.books.BookDTO
+com.app.backbiblioteca.Back.books.controller
+com.app.backbiblioteca.Back.books.service
+com.app.backbiblioteca.Back.config
+com.app.backbiblioteca.Back.reservas.controller
+com.app.backbiblioteca.Back.reservas.dto
+com.app.backbiblioteca.Back.reservas.service
+com.app.backbiblioteca.Back.users.controller
+com.app.backbiblioteca.Back.users.service
+com.app.backbiblioteca.Back.users.userDTO
